@@ -1,0 +1,6 @@
+# Secrets - không commit lên git
+.env
+alertmanager/alertmanager.yml
+
+# Data volumes (nếu mount local)
+data/

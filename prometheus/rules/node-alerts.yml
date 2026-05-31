@@ -7,8 +7,8 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "High CPU on {{ $labels.instance }}"
-          description: "CPU > 85% in 5m (current: {{ $value | humanize }}%)"
+          summary: "CPU cao trên {{ $labels.instance }}"
+          description: "CPU vượt 85% liên tục 5 phút (hiện tại: {{ $value | humanize }}%)"
 
       - alert: HostOutOfMemory
         expr: (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100 < 10
@@ -16,8 +16,8 @@ groups:
         labels:
           severity: critical
         annotations:
-          summary: "Low memory on {{ $labels.instance }}"
-          description: "Available memory < 10% ({{ $value | humanize }}%)"
+          summary: "RAM sắp hết trên {{ $labels.instance }}"
+          description: "RAM còn lại dưới 10% (hiện tại: {{ $value | humanize }}%)"
 
       - alert: HostOutOfDiskSpace
         expr: (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) * 100 < 15
@@ -25,8 +25,8 @@ groups:
         labels:
           severity: critical
         annotations:
-          summary: "Low disk on {{ $labels.instance }}"
-          description: "Root partition < 15% free ({{ $value | humanize }}%)"
+          summary: "Disk sắp đầy trên {{ $labels.instance }}"
+          description: "Phân vùng / còn lại dưới 15% (hiện tại: {{ $value | humanize }}%)"
 
       - alert: HostSwapUsageHigh
         expr: node_memory_SwapTotal_bytes > 0 and (1 - (node_memory_SwapFree_bytes / node_memory_SwapTotal_bytes)) * 100 > 80
@@ -34,8 +34,8 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "High swap usage on {{ $labels.instance }}"
-          description: "Swap usage > 80% ({{ $value | humanize }}%)"
+          summary: "Swap cao trên {{ $labels.instance }}"
+          description: "Swap đã dùng trên 80% (hiện tại: {{ $value | humanize }}%)"
 
       - alert: NodeExporterDown
         expr: up{job=~"node-exporter.*"} == 0
@@ -43,5 +43,5 @@ groups:
         labels:
           severity: critical
         annotations:
-          summary: "Node exporter down on {{ $labels.instance }}"
-          description: "Node exporter on {{ $labels.instance }} has been unreachable for more than 2 minutes"
+          summary: "Mất kết nối tới {{ $labels.instance }}"
+          description: "Node exporter trên {{ $labels.instance }} không phản hồi hơn 2 phút"

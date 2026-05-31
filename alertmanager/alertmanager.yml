@@ -32,12 +32,12 @@ receivers:
         send_resolved: true
         message: |
           {{ range .Alerts }}
-          {{ if eq .Status "firing" }}🟡 <b>WARNING</b>{{ else }}✅ <b>RESOLVED</b>{{ end }}
-          <b>Alert:</b> {{ .Labels.alertname }}
-          <b>Instance:</b> {{ .Labels.instance }}
-          <b>Summary:</b> {{ .Annotations.summary }}
-          <b>Description:</b> {{ .Annotations.description }}
-          <b>Time:</b> {{ .StartsAt.Format "2006-01-02 15:04:05" }}
+          {{ if eq .Status "firing" }}🟡 <b>CẢNH BÁO</b>{{ else }}✅ <b>ĐÃ KHẮC PHỤC</b>{{ end }}
+          <b>Loại:</b> {{ .Labels.alertname }}
+          <b>Máy chủ:</b> {{ .Labels.instance }}
+          <b>Tóm tắt:</b> {{ .Annotations.summary }}
+          <b>Chi tiết:</b> {{ .Annotations.description }}
+          <b>Thời gian:</b> {{ .StartsAt.Format "02/01/2006 15:04:05" }}
           {{ end }}
 
   - name: 'telegram-critical'
@@ -48,10 +48,10 @@ receivers:
         send_resolved: true
         message: |
           {{ range .Alerts }}
-          {{ if eq .Status "firing" }}🔴 <b>CRITICAL</b>{{ else }}✅ <b>RESOLVED</b>{{ end }}
-          <b>Alert:</b> {{ .Labels.alertname }}
-          <b>Instance:</b> {{ .Labels.instance }}
-          <b>Summary:</b> {{ .Annotations.summary }}
-          <b>Description:</b> {{ .Annotations.description }}
-          <b>Time:</b> {{ .StartsAt.Format "2006-01-02 15:04:05" }}
+          {{ if eq .Status "firing" }}🔴 <b>KHẨN CẤP</b>{{ else }}✅ <b>ĐÃ KHẮC PHỤC</b>{{ end }}
+          <b>Loại:</b> {{ .Labels.alertname }}
+          <b>Máy chủ:</b> {{ .Labels.instance }}
+          <b>Tóm tắt:</b> {{ .Annotations.summary }}
+          <b>Chi tiết:</b> {{ .Annotations.description }}
+          <b>Thời gian:</b> {{ .StartsAt.Format "02/01/2006 15:04:05" }}
           {{ end }}

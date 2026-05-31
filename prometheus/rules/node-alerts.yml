@@ -20,13 +20,13 @@ groups:
           description: "RAM còn lại dưới 10% (hiện tại: {{ $value | humanize }}%)"
 
       - alert: HostOutOfDiskSpace
-        expr: (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) * 100 < 15
+        expr: (1 - node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) * 100 > 60
         for: 5m
         labels:
           severity: critical
         annotations:
           summary: "Disk sắp đầy trên {{ $labels.instance }}"
-          description: "Phân vùng / còn lại dưới 15% (hiện tại: {{ $value | humanize }}%)"
+          description: "Phân vùng / đã dùng trên 60% (hiện tại: {{ $value | humanize }}%)"
 
       - alert: HostSwapUsageHigh
         expr: node_memory_SwapTotal_bytes > 0 and (1 - (node_memory_SwapFree_bytes / node_memory_SwapTotal_bytes)) * 100 > 80

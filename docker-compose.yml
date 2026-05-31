@@ -27,7 +27,7 @@ services:
     restart: unless-stopped
     user: "65534:65534"
     ports:
-      - "127.0.0.1:9901:9090"
+      - "0.0.0.0:9901:9090"
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - ./prometheus/rules:/etc/prometheus/rules:ro
@@ -56,7 +56,7 @@ services:
     restart: unless-stopped
     user: "65534:65534"
     ports:
-      - "127.0.0.1:9902:9093"
+      - "0.0.0.0:9902:9093"
     volumes:
       - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
       - alertmanager_data:/alertmanager
@@ -75,7 +75,7 @@ services:
     restart: unless-stopped
     user: "472:472"
     ports:
-      - "127.0.0.1:9900:3000"
+      - "0.0.0.0:9900:3000"
     volumes:
       - grafana_data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning:ro

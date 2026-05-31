@@ -26,8 +26,8 @@ inhibit_rules:
 receivers:
   - name: 'telegram-default'
     telegram_configs:
-      - bot_token: '${TELEGRAM_BOT_TOKEN}'
-        chat_id: ${TELEGRAM_CHAT_ID}
+      - bot_token: 'PASTE_YOUR_BOT_TOKEN_HERE'
+        chat_id: -1001234567890
         parse_mode: 'HTML'
         send_resolved: true
         message: |
@@ -42,8 +42,8 @@ receivers:
 
   - name: 'telegram-critical'
     telegram_configs:
-      - bot_token: '${TELEGRAM_BOT_TOKEN}'
-        chat_id: ${TELEGRAM_CHAT_ID}
+      - bot_token: 'PASTE_YOUR_BOT_TOKEN_HERE'
+        chat_id: -1001234567890
         parse_mode: 'HTML'
         send_resolved: true
         message: |

@@ -14,7 +14,7 @@ services:
       - '--path.sysfs=/host/sys'
       - '--path.rootfs=/rootfs'
       - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
-      - '--web.listen-address=:9100'
+      - '--web.listen-address=:9101'
     logging:
       driver: "json-file"
       options:

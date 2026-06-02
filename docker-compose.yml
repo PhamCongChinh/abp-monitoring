@@ -27,7 +27,7 @@ services:
     restart: unless-stopped
     user: "65534:65534"
     ports:
-      - "0.0.0.0:9901:9090"
+      - "127.0.0.1:9901:9090"
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - ./prometheus/rules:/etc/prometheus/rules:ro
@@ -56,7 +56,7 @@ services:
     restart: unless-stopped
     user: "65534:65534"
     ports:
-      - "0.0.0.0:9902:9093"
+      - "127.0.0.1:9902:9093"
     volumes:
       - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
       - alertmanager_data:/alertmanager
@@ -74,9 +74,9 @@ services:
     container_name: kafka-exporter
     restart: unless-stopped
     command:
-      - '--kafka.server=0.0.0.0:9092'
-    ports:
-      - "0.0.0.0:9903:9093"
+      - '--kafka.server=host.docker.internal:9092'
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     logging:
       driver: "json-file"
       options:

@@ -36,6 +36,12 @@ scrape_configs:
           service: 'gateway'
           env: 'production'
 
+  - job_name: 'kafka-exporter'
+    static_configs:
+      - targets: ['kafka-exporter:9308']
+        labels:
+          service: 'kafka'
+
   # Thêm các VPS khác ở đây
   # - job_name: 'node-exporter-remote'
   #   static_configs:

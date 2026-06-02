@@ -1,0 +1,38 @@
+groups:
+  - name: gateway_alerts
+    rules:
+      - alert: PlatformDataStalled
+        expr: gateway_posts_by_platform_total > 0 and rate(gateway_posts_by_platform_total[15m]) == 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Platform {{ $labels.platform }} ngừng nhận data"
+          description: "Không có post mới từ {{ $labels.platform }} trong 25 phút qua (tổng hiện tại: {{ $value | humanize }})"
+
+      - alert: GatewayDown
+        expr: up{job="gateway"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Gateway không phản hồi"
+          description: "Gateway tại {{ $labels.instance }} không scrape được hơn 2 phút"
+
+      - alert: GatewayDLQNotEmpty
+        expr: gateway_dlq_size > 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Dead letter queue có {{ $value }} message bị lỗi"
+          description: "gateway_dlq_size > 0 liên tục 5 phút — có message không ghi được vào Kafka"
+
+      - alert: GatewayKafkaWriteFailure
+        expr: rate(gateway_kafka_write_total{result!="success"}[5m]) > 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Kafka write thất bại trên topic {{ $labels.topic }}"
+          description: "Có lỗi ghi Kafka liên tục 2 phút trên topic {{ $labels.topic }}"

@@ -1,0 +1,38 @@
+groups:
+  - name: mongodb
+    rules:
+      - alert: MongoDBDown
+        expr: mongodb_up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "MongoDB is down"
+          description: "MongoDB instance has been unreachable for more than 1 minute."
+
+      - alert: MongoDBTooManyConnections
+        expr: mongodb_connections{state="current"} > 500
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "MongoDB too many connections ({{ $value }})"
+          description: "Current connections exceeded 500 for 5 minutes."
+
+      - alert: MongoDBHighMemory
+        expr: mongodb_memory{type="resident"} > 2048
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "MongoDB high resident memory ({{ $value }}MB)"
+          description: "MongoDB resident memory exceeded 2GB for 5 minutes."
+
+      - alert: MongoDBReplicationLagHigh
+        expr: mongodb_mongod_replset_member_optime_date{state="SECONDARY"} - on() mongodb_mongod_replset_member_optime_date{state="PRIMARY"} > 30
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "MongoDB replication lag is high ({{ $value }}s)"
+          description: "Replication lag exceeded 30 seconds."

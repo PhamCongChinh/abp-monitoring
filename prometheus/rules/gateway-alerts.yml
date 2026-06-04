@@ -9,8 +9,8 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "Không có tin bài mới từ {{ $labels.platform }}"
-          description: "Platform {{ $labels.platform }} không có bài mới trong 1 giờ qua (tổng: {{ $value | humanize }} bài)"
+          summary: "Không có tin bài mới từ <b>{{ $labels.platform }}</b>"
+          description: "<b>{{ $labels.platform }}</b> không có bài mới trong 1 giờ qua (tổng: {{ $value | humanize }} bài)"
 
       - alert: GatewayDown
         expr: up{job="gateway"} == 0

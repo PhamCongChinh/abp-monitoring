@@ -102,7 +102,7 @@ services:
     container_name: mongodb-exporter
     restart: unless-stopped
     environment:
-      - MONGODB_URI=mongodb://host.docker.internal:5525
+      - MONGODB_URI=${MONGODB_URI}
     command:
       - '--collect-all'
       - '--compatible-mode'

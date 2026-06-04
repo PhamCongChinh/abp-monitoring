@@ -9,36 +9,6 @@
   "panels": [
 
     {
-      "id": 1,
-      "title": "Total Posts by Platform (All-time)",
-      "type": "piechart",
-      "gridPos": { "x": 0, "y": 18, "w": 8, "h": 8 },
-      "options": {
-        "pieType": "donut",
-        "legend": { "displayMode": "table", "placement": "right", "values": ["value", "percent"] }
-      },
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": [
-          { "matcher": { "id": "byName", "options": "youtube" },   "properties": [{ "id": "color", "value": { "fixedColor": "#FF0000", "mode": "fixed" } }] },
-          { "matcher": { "id": "byName", "options": "facebook" },  "properties": [{ "id": "color", "value": { "fixedColor": "#1877F2", "mode": "fixed" } }] },
-          { "matcher": { "id": "byName", "options": "tiktok" },    "properties": [{ "id": "color", "value": { "fixedColor": "#FE2C55", "mode": "fixed" } }] },
-          { "matcher": { "id": "byName", "options": "telegram" },  "properties": [{ "id": "color", "value": { "fixedColor": "#26A5E4", "mode": "fixed" } }] },
-          { "matcher": { "id": "byName", "options": "web" },       "properties": [{ "id": "color", "value": { "fixedColor": "#00CED1", "mode": "fixed" } }] },
-          { "matcher": { "id": "byName", "options": "x" },         "properties": [{ "id": "color", "value": { "fixedColor": "#A0A0A0", "mode": "fixed" } }] }
-        ]
-      },
-      "targets": [
-        {
-          "datasource": { "type": "prometheus" },
-          "expr": "gateway_posts_by_platform_total{platform!=\"news_page\"}",
-          "legendFormat": "{{platform}}",
-          "instant": true
-        }
-      ]
-    },
-
-    {
       "id": 2,
       "title": "Request Rate (req/s)",
       "type": "timeseries",
@@ -127,44 +97,6 @@
     },
 
     {
-      "id": 18,
-      "title": "HTTP Errors Today",
-      "type": "stat",
-      "gridPos": { "x": 0, "y": 22, "w": 8, "h": 4 },
-      "options": {
-        "reduceOptions": { "calcs": ["lastNotNull"] },
-        "colorMode": "background",
-        "textMode": "value_and_name",
-        "orientation": "vertical"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "short",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              { "color": "#73BF69", "value": null },
-              { "color": "#F2CC0C", "value": 1 },
-              { "color": "#F2495C", "value": 100 }
-            ]
-          }
-        },
-        "overrides": [
-          { "matcher": { "id": "byRegexp", "options": ".*400.*" }, "properties": [{ "id": "color", "value": { "fixedColor": "#F2CC0C", "mode": "fixed" } }] },
-          { "matcher": { "id": "byRegexp", "options": ".*500.*" }, "properties": [{ "id": "color", "value": { "fixedColor": "#F2495C", "mode": "fixed" } }] }
-        ]
-      },
-      "targets": [
-        {
-          "datasource": { "type": "prometheus" },
-          "expr": "increase(gateway_http_errors_total[$__range])",
-          "legendFormat": "{{endpoint}} {{code}}",
-          "instant": true
-        }
-      ]
-    },
-
-    {
       "id": 19,
       "title": "Unknown Platform Rate",
       "type": "timeseries",
@@ -196,31 +128,6 @@
       ]
     },
 
-    {
-      "id": 4,
-      "title": "Total Posts Processed (All-time)",
-      "type": "stat",
-      "gridPos": { "x": 16, "y": 22, "w": 8, "h": 4 },
-      "options": {
-        "reduceOptions": { "calcs": ["lastNotNull"] },
-        "colorMode": "value",
-        "textMode": "auto",
-        "graphMode": "none"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "short",
-          "color": { "mode": "fixed", "fixedColor": "#5794F2" }
-        }
-      },
-      "targets": [
-        {
-          "datasource": { "type": "prometheus" },
-          "expr": "sum(gateway_posts_total)",
-          "legendFormat": "Total Posts"
-        }
-      ]
-    },
 
     {
       "id": 5,

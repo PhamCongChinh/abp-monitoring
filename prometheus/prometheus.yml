@@ -53,6 +53,13 @@ scrape_configs:
           service: 'mongodb'
           env: 'production'
 
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+        labels:
+          service: 'redis'
+          env: 'production'
+
   # Thêm các VPS khác ở đây
   # - job_name: 'node-exporter-remote'
   #   static_configs:

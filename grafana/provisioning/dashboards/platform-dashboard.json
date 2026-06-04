@@ -1,0 +1,315 @@
+{
+  "uid": "platform-flow",
+  "title": "Per-Platform",
+  "tags": ["platform", "data"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "refresh": "30s",
+  "time": { "from": "now/d", "to": "now" },
+  "panels": [
+
+    {
+      "id": 100,
+      "title": "Today's Summary",
+      "type": "row",
+      "gridPos": { "x": 0, "y": 0, "w": 24, "h": 1 },
+      "collapsed": false
+    },
+
+    {
+      "id": 101,
+      "title": "Posts Today by Platform",
+      "type": "piechart",
+      "gridPos": { "x": 0, "y": 1, "w": 8, "h": 8 },
+      "options": { "pieType": "donut", "legend": { "displayMode": "table", "placement": "right", "values": ["value", "percent"] } },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "youtube" },  "properties": [{ "id": "color", "value": { "fixedColor": "#FF0000", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "facebook" }, "properties": [{ "id": "color", "value": { "fixedColor": "#1877F2", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "tiktok" },   "properties": [{ "id": "color", "value": { "fixedColor": "#FE2C55", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "telegram" }, "properties": [{ "id": "color", "value": { "fixedColor": "#26A5E4", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "web" },      "properties": [{ "id": "color", "value": { "fixedColor": "#00CED1", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "x" },        "properties": [{ "id": "color", "value": { "fixedColor": "#A0A0A0", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [{
+        "datasource": { "type": "prometheus" },
+        "expr": "gateway_daily_posts_by_platform{platform!=\"news_page\"}",
+        "legendFormat": "{{platform}}",
+        "instant": true
+      }]
+    },
+
+    {
+      "id": 102,
+      "title": "Platform Volume Today",
+      "type": "bargauge",
+      "gridPos": { "x": 8, "y": 1, "w": 16, "h": 8 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "orientation": "horizontal",
+        "displayMode": "gradient",
+        "showUnfilled": true,
+        "minVizHeight": 10
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#73BF69", "value": null },
+              { "color": "#5794F2", "value": 10000 },
+              { "color": "#FF7043", "value": 500000 }
+            ]
+          },
+          "color": { "mode": "thresholds" }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "youtube" },  "properties": [{ "id": "color", "value": { "fixedColor": "#FF0000", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "facebook" }, "properties": [{ "id": "color", "value": { "fixedColor": "#1877F2", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "tiktok" },   "properties": [{ "id": "color", "value": { "fixedColor": "#FE2C55", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "telegram" }, "properties": [{ "id": "color", "value": { "fixedColor": "#26A5E4", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "web" },      "properties": [{ "id": "color", "value": { "fixedColor": "#00CED1", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "x" },        "properties": [{ "id": "color", "value": { "fixedColor": "#A0A0A0", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [{
+        "datasource": { "type": "prometheus" },
+        "expr": "gateway_daily_posts_by_platform{platform!=\"news_page\"}",
+        "legendFormat": "{{platform}}",
+        "instant": true
+      }]
+    },
+
+    {
+      "id": 200,
+      "title": "Freshness — bao lâu rồi không có bài mới",
+      "type": "row",
+      "gridPos": { "x": 0, "y": 9, "w": 24, "h": 1 },
+      "collapsed": false
+    },
+
+    {
+      "id": 201,
+      "title": "YouTube — Freshness",
+      "type": "stat",
+      "gridPos": { "x": 0, "y": 10, "w": 4, "h": 4 },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "textMode": "auto", "graphMode": "none" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#73BF69", "value": null },
+              { "color": "#F2CC0C", "value": 3600 },
+              { "color": "#F2495C", "value": 7200 }
+            ]
+          },
+          "color": { "mode": "thresholds" }
+        }
+      },
+      "targets": [{ "datasource": { "type": "prometheus" }, "expr": "time() - gateway_last_post_timestamp_seconds{platform=\"youtube\"}", "instant": true }]
+    },
+
+    {
+      "id": 202,
+      "title": "Facebook — Freshness",
+      "type": "stat",
+      "gridPos": { "x": 4, "y": 10, "w": 4, "h": 4 },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "textMode": "auto", "graphMode": "none" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#73BF69", "value": null },
+              { "color": "#F2CC0C", "value": 3600 },
+              { "color": "#F2495C", "value": 7200 }
+            ]
+          },
+          "color": { "mode": "thresholds" }
+        }
+      },
+      "targets": [{ "datasource": { "type": "prometheus" }, "expr": "time() - gateway_last_post_timestamp_seconds{platform=\"facebook\"}", "instant": true }]
+    },
+
+    {
+      "id": 203,
+      "title": "TikTok — Freshness",
+      "type": "stat",
+      "gridPos": { "x": 8, "y": 10, "w": 4, "h": 4 },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "textMode": "auto", "graphMode": "none" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#73BF69", "value": null },
+              { "color": "#F2CC0C", "value": 3600 },
+              { "color": "#F2495C", "value": 7200 }
+            ]
+          },
+          "color": { "mode": "thresholds" }
+        }
+      },
+      "targets": [{ "datasource": { "type": "prometheus" }, "expr": "time() - gateway_last_post_timestamp_seconds{platform=\"tiktok\"}", "instant": true }]
+    },
+
+    {
+      "id": 204,
+      "title": "Telegram — Freshness",
+      "type": "stat",
+      "gridPos": { "x": 12, "y": 10, "w": 4, "h": 4 },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "textMode": "auto", "graphMode": "none" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#73BF69", "value": null },
+              { "color": "#F2CC0C", "value": 3600 },
+              { "color": "#F2495C", "value": 7200 }
+            ]
+          },
+          "color": { "mode": "thresholds" }
+        }
+      },
+      "targets": [{ "datasource": { "type": "prometheus" }, "expr": "time() - gateway_last_post_timestamp_seconds{platform=\"telegram\"}", "instant": true }]
+    },
+
+    {
+      "id": 205,
+      "title": "Web — Freshness",
+      "type": "stat",
+      "gridPos": { "x": 16, "y": 10, "w": 4, "h": 4 },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "textMode": "auto", "graphMode": "none" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#73BF69", "value": null },
+              { "color": "#F2CC0C", "value": 3600 },
+              { "color": "#F2495C", "value": 7200 }
+            ]
+          },
+          "color": { "mode": "thresholds" }
+        }
+      },
+      "targets": [{ "datasource": { "type": "prometheus" }, "expr": "time() - gateway_last_post_timestamp_seconds{platform=\"web\"}", "instant": true }]
+    },
+
+    {
+      "id": 206,
+      "title": "X — Freshness",
+      "type": "stat",
+      "gridPos": { "x": 20, "y": 10, "w": 4, "h": 4 },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "textMode": "auto", "graphMode": "none" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#73BF69", "value": null },
+              { "color": "#F2CC0C", "value": 3600 },
+              { "color": "#F2495C", "value": 7200 }
+            ]
+          },
+          "color": { "mode": "thresholds" }
+        }
+      },
+      "targets": [{ "datasource": { "type": "prometheus" }, "expr": "time() - gateway_last_post_timestamp_seconds{platform=\"x\"}", "instant": true }]
+    },
+
+    {
+      "id": 300,
+      "title": "Flow Rate Trend",
+      "type": "row",
+      "gridPos": { "x": 0, "y": 14, "w": 24, "h": 1 },
+      "collapsed": false
+    },
+
+    {
+      "id": 301,
+      "title": "Posts Rate per Platform (5m window)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 15, "w": 24, "h": 8 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "custom": { "lineWidth": 2, "fillOpacity": 12, "gradientMode": "opacity" }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "youtube" },  "properties": [{ "id": "color", "value": { "fixedColor": "#FF0000", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "facebook" }, "properties": [{ "id": "color", "value": { "fixedColor": "#1877F2", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "tiktok" },   "properties": [{ "id": "color", "value": { "fixedColor": "#FE2C55", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "telegram" }, "properties": [{ "id": "color", "value": { "fixedColor": "#26A5E4", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "web" },      "properties": [{ "id": "color", "value": { "fixedColor": "#00CED1", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "x" },        "properties": [{ "id": "color", "value": { "fixedColor": "#A0A0A0", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [{
+        "datasource": { "type": "prometheus" },
+        "expr": "rate(gateway_posts_by_platform_total{platform!=\"news_page\"}[5m])",
+        "legendFormat": "{{platform}}"
+      }]
+    },
+
+    {
+      "id": 302,
+      "title": "Fetch Errors (403/429 = bị block)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 23, "w": 12, "h": 7 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "custom": { "lineWidth": 2, "fillOpacity": 20, "gradientMode": "opacity" }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "403" }, "properties": [{ "id": "color", "value": { "fixedColor": "#F2CC0C", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "429" }, "properties": [{ "id": "color", "value": { "fixedColor": "#F2495C", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "rate(gateway_http_errors_total{code=\"403\"}[5m])", "legendFormat": "403" },
+        { "datasource": { "type": "prometheus" }, "expr": "rate(gateway_http_errors_total{code=\"429\"}[5m])", "legendFormat": "429" }
+      ]
+    },
+
+    {
+      "id": 303,
+      "title": "Unknown Platform Rate (bot detection)",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 23, "w": 12, "h": 7 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "custom": { "lineWidth": 2, "fillOpacity": 25, "gradientMode": "opacity" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#73BF69", "value": null },
+              { "color": "#F2CC0C", "value": 10 },
+              { "color": "#F2495C", "value": 100 }
+            ]
+          },
+          "color": { "mode": "fixed", "fixedColor": "#FF7043" }
+        }
+      },
+      "targets": [{
+        "datasource": { "type": "prometheus" },
+        "expr": "rate(gateway_unknown_platform_total[5m])",
+        "legendFormat": "unknown platform req/s"
+      }]
+    }
+
+  ]
+}

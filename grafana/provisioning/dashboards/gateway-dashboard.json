@@ -34,14 +34,13 @@
           { "matcher": { "id": "byName", "options": "tiktok" },    "properties": [{ "id": "color", "value": { "fixedColor": "#FE2C55", "mode": "fixed" } }] },
           { "matcher": { "id": "byName", "options": "telegram" },  "properties": [{ "id": "color", "value": { "fixedColor": "#26A5E4", "mode": "fixed" } }] },
           { "matcher": { "id": "byName", "options": "web" },       "properties": [{ "id": "color", "value": { "fixedColor": "#00CED1", "mode": "fixed" } }] },
-          { "matcher": { "id": "byName", "options": "news_page" }, "properties": [{ "id": "color", "value": { "fixedColor": "#FF9800", "mode": "fixed" } }] },
           { "matcher": { "id": "byName", "options": "x" },         "properties": [{ "id": "color", "value": { "fixedColor": "#A0A0A0", "mode": "fixed" } }] }
         ]
       },
       "targets": [
         {
           "datasource": { "type": "prometheus" },
-          "expr": "gateway_daily_posts_by_platform",
+          "expr": "gateway_daily_posts_by_platform{platform!=\"news_page\"}",
           "legendFormat": "{{platform}}",
           "instant": true
         }
@@ -147,14 +146,13 @@
           { "matcher": { "id": "byName", "options": "tiktok" },    "properties": [{ "id": "color", "value": { "fixedColor": "#FE2C55", "mode": "fixed" } }] },
           { "matcher": { "id": "byName", "options": "telegram" },  "properties": [{ "id": "color", "value": { "fixedColor": "#26A5E4", "mode": "fixed" } }] },
           { "matcher": { "id": "byName", "options": "web" },       "properties": [{ "id": "color", "value": { "fixedColor": "#00CED1", "mode": "fixed" } }] },
-          { "matcher": { "id": "byName", "options": "news_page" }, "properties": [{ "id": "color", "value": { "fixedColor": "#FF9800", "mode": "fixed" } }] },
           { "matcher": { "id": "byName", "options": "x" },         "properties": [{ "id": "color", "value": { "fixedColor": "#A0A0A0", "mode": "fixed" } }] }
         ]
       },
       "targets": [
         {
           "datasource": { "type": "prometheus" },
-          "expr": "increase(gateway_posts_by_platform_total[1h])",
+          "expr": "increase(gateway_posts_by_platform_total{platform!=\"news_page\"}[1h])",
           "legendFormat": "{{platform}}"
         }
       ]
@@ -185,14 +183,13 @@
           { "matcher": { "id": "byName", "options": "tiktok" },    "properties": [{ "id": "color", "value": { "fixedColor": "#FE2C55", "mode": "fixed" } }] },
           { "matcher": { "id": "byName", "options": "telegram" },  "properties": [{ "id": "color", "value": { "fixedColor": "#26A5E4", "mode": "fixed" } }] },
           { "matcher": { "id": "byName", "options": "web" },       "properties": [{ "id": "color", "value": { "fixedColor": "#00CED1", "mode": "fixed" } }] },
-          { "matcher": { "id": "byName", "options": "news_page" }, "properties": [{ "id": "color", "value": { "fixedColor": "#FF9800", "mode": "fixed" } }] },
           { "matcher": { "id": "byName", "options": "x" },         "properties": [{ "id": "color", "value": { "fixedColor": "#A0A0A0", "mode": "fixed" } }] }
         ]
       },
       "targets": [
         {
           "datasource": { "type": "prometheus" },
-          "expr": "gateway_posts_by_platform_total",
+          "expr": "gateway_posts_by_platform_total{platform!=\"news_page\"}",
           "legendFormat": "{{platform}}",
           "instant": true
         }
@@ -459,14 +456,13 @@
           { "matcher": { "id": "byName", "options": "tiktok" },    "properties": [{ "id": "color", "value": { "fixedColor": "#FE2C55", "mode": "fixed" } }] },
           { "matcher": { "id": "byName", "options": "telegram" },  "properties": [{ "id": "color", "value": { "fixedColor": "#26A5E4", "mode": "fixed" } }] },
           { "matcher": { "id": "byName", "options": "web" },       "properties": [{ "id": "color", "value": { "fixedColor": "#00CED1", "mode": "fixed" } }] },
-          { "matcher": { "id": "byName", "options": "news_page" }, "properties": [{ "id": "color", "value": { "fixedColor": "#FF9800", "mode": "fixed" } }] },
           { "matcher": { "id": "byName", "options": "x" },         "properties": [{ "id": "color", "value": { "fixedColor": "#A0A0A0", "mode": "fixed" } }] }
         ]
       },
       "targets": [
         {
           "datasource": { "type": "prometheus" },
-          "expr": "rate(gateway_posts_by_platform_total[5m])",
+          "expr": "rate(gateway_posts_by_platform_total{platform!=\"news_page\"}[5m])",
           "legendFormat": "{{platform}}"
         }
       ]

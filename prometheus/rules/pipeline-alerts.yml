@@ -1,0 +1,144 @@
+groups:
+
+  # ─── CRITICAL — gọi ngay ───────────────────────────────────────────────────
+  - name: pipeline_critical
+    rules:
+
+      - alert: ServiceDown
+        expr: up == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "🔴 {{ $labels.job }} DOWN"
+          description: "{{ $labels.job }} tại {{ $labels.instance }} không phản hồi hơn 2 phút"
+
+      - alert: PlatformNoData2h
+        expr: increase(gateway_posts_by_platform_total{platform!="news_page"}[2h]) == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "🔴 Platform {{ $labels.platform }} không có data 2h"
+          description: "Crawler bị block, API 429/403, hoặc pipeline tắc trước Kafka"
+
+      - alert: OOMKillDetected
+        expr: increase(node_vmstat_oom_kill[5m]) > 0
+        for: 0m
+        labels:
+          severity: critical
+        annotations:
+          summary: "🔴 OOM Kill trên {{ $labels.instance }}"
+          description: "Kernel đã kill process vì hết RAM — nghi phạm: MongoDB hoặc headless browser. Kiểm tra container_memory_failcnt"
+
+      - alert: DiskCritical
+        expr: |
+          (node_filesystem_avail_bytes{fstype!~"tmpfs|fuse.lxcfs|squashfs"}
+          / node_filesystem_size_bytes{fstype!~"tmpfs|fuse.lxcfs|squashfs"}) * 100 < 10
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "🔴 Disk còn {{ $value | humanize }}% — MongoDB sẽ dừng ghi"
+          description: "Mount {{ $labels.mountpoint }} trên {{ $labels.instance }} sắp đầy"
+
+      - alert: MongoDBUnreachable
+        expr: mongodb_up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "🔴 MongoDB không nhận kết nối"
+          description: "mongodb_up == 0 liên tục 1 phút — kiểm tra container và disk"
+
+      - alert: KafkaTotalLagExplosion
+        expr: sum(kafka_consumergroup_lag) > 200000
+        for: 3m
+        labels:
+          severity: critical
+        annotations:
+          summary: "🔴 Kafka lag {{ $value | humanize }} messages — pipeline gần vỡ"
+          description: "Consumer xử lý quá chậm hoặc đã chết — data đang tồn đọng cực lớn"
+
+  # ─── WARNING — xem trong giờ ───────────────────────────────────────────────
+  - name: pipeline_warning
+    rules:
+
+      - alert: KafkaLagGrowing
+        expr: deriv(sum by (consumergroup, topic) (kafka_consumergroup_lag)[10m:1m]) > 50
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "⚠️ Kafka lag đang tăng đều ({{ $labels.topic }} / {{ $labels.consumergroup }})"
+          description: "Consumer không theo kịp producer — downstream có thể đang nghẽn. Kiểm tra BullMQ / Java processor"
+
+      - alert: KafkaHighLag
+        expr: sum by (consumergroup, topic) (kafka_consumergroup_lag) > 50000
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "⚠️ Kafka lag cao: {{ $value | humanize }} ({{ $labels.topic }})"
+          description: "Tồn đọng lớn — nếu tăng tiếp sẽ thành critical"
+
+      - alert: MongoDBConnectionsHigh
+        expr: |
+          mongodb_connections{state="current"}
+          / (mongodb_connections{state="current"} + mongodb_connections{state="available"})
+          > 0.8
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "⚠️ MongoDB connections {{ $value | humanizePercentage }} capacity"
+          description: "Client không dùng connection pool đúng — combo này từng gây Mongo chết hàng loạt"
+
+      - alert: MongoDBHighMemory
+        expr: mongodb_memory{type="resident"} > 2048
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "⚠️ MongoDB RAM {{ $value | humanize }}MB — gần OOM"
+          description: "WiredTiger cache phình — kiểm tra query có COLLSCAN không"
+
+      - alert: DiskWarning
+        expr: |
+          (1 - node_filesystem_avail_bytes{fstype!~"tmpfs|fuse.lxcfs|squashfs"}
+          / node_filesystem_size_bytes{fstype!~"tmpfs|fuse.lxcfs|squashfs"}) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "⚠️ Disk {{ $value | humanize }}% — cần dọn sớm"
+          description: "Mount {{ $labels.mountpoint }} đang đầy dần. Kafka log + MongoDB data tăng nhanh"
+
+      - alert: GatewayHigh500Rate
+        expr: |
+          sum(rate(gateway_http_errors_total{code="500"}[5m]))
+          / sum(rate(gateway_requests_total[5m])) > 0.01
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "⚠️ Lỗi 500 vượt 1% ({{ $value | humanizePercentage }})"
+          description: "Kiểm tra logs gateway — có thể Kafka write fail hoặc MongoDB timeout"
+
+      - alert: GatewayUnknownPlatformBot
+        expr: rate(gateway_unknown_platform_total[10m]) > 100
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "⚠️ Bot gửi platform lạ: {{ $value | humanize }} req/s"
+          description: "Có nguồn gửi liên tục platform không hợp lệ — cân nhắc rate-limit IP"
+
+      - alert: HostHighCpuLoad
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "⚠️ CPU {{ $value | humanize }}% trên {{ $labels.instance }}"
+          description: "CPU cao liên tục — kiểm tra headless browser hoặc Java processor"

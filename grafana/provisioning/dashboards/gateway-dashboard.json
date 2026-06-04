@@ -8,10 +8,130 @@
   "time": { "from": "now-1h", "to": "now" },
   "panels": [
     {
+      "id": 100,
+      "title": "Daily Stats",
+      "type": "row",
+      "gridPos": { "x": 0, "y": 0, "w": 24, "h": 1 },
+      "collapsed": false
+    },
+    {
+      "id": 101,
+      "title": "Posts Today by Platform",
+      "type": "piechart",
+      "gridPos": { "x": 0, "y": 1, "w": 8, "h": 8 },
+      "options": {
+        "pieType": "pie",
+        "legend": { "displayMode": "table", "placement": "right", "values": ["value", "percent"] }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "increase(gateway_posts_by_platform_total[24h])",
+          "legendFormat": "{{platform}}",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "id": 102,
+      "title": "Posts Today by Endpoint",
+      "type": "stat",
+      "gridPos": { "x": 8, "y": 1, "w": 8, "h": 8 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "textMode": "value_and_name",
+        "orientation": "vertical"
+      },
+      "fieldConfig": {
+        "defaults": { "unit": "short" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "increase(gateway_posts_total[24h])",
+          "legendFormat": "{{endpoint}}",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "id": 103,
+      "title": "Total Posts Today",
+      "type": "stat",
+      "gridPos": { "x": 16, "y": 1, "w": 8, "h": 4 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "value",
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": { "unit": "short" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "sum(increase(gateway_posts_total[24h]))",
+          "legendFormat": "Total",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "id": 104,
+      "title": "Kafka Writes Today",
+      "type": "stat",
+      "gridPos": { "x": 16, "y": 5, "w": 8, "h": 4 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "value",
+        "textMode": "value_and_name",
+        "orientation": "vertical"
+      },
+      "fieldConfig": {
+        "defaults": { "unit": "short" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "increase(gateway_kafka_write_total[24h])",
+          "legendFormat": "{{topic}}",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "id": 105,
+      "title": "Posts Trend (hourly)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 9, "w": 24, "h": 8 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": { "lineWidth": 2, "fillOpacity": 10 }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "increase(gateway_posts_by_platform_total[1h])",
+          "legendFormat": "{{platform}}"
+        }
+      ]
+    },
+
+    {
+      "id": 200,
+      "title": "Realtime",
+      "type": "row",
+      "gridPos": { "x": 0, "y": 17, "w": 24, "h": 1 },
+      "collapsed": false
+    },
+    {
       "id": 1,
       "title": "Total Posts by Platform",
       "type": "piechart",
-      "gridPos": { "x": 0, "y": 0, "w": 8, "h": 8 },
+      "gridPos": { "x": 0, "y": 18, "w": 8, "h": 8 },
       "options": {
         "pieType": "pie",
         "legend": { "displayMode": "table", "placement": "right", "values": ["value", "percent"] }
@@ -29,7 +149,7 @@
       "id": 2,
       "title": "Request Rate (req/s)",
       "type": "timeseries",
-      "gridPos": { "x": 8, "y": 0, "w": 8, "h": 8 },
+      "gridPos": { "x": 8, "y": 18, "w": 8, "h": 8 },
       "fieldConfig": {
         "defaults": {
           "unit": "reqps",
@@ -48,7 +168,7 @@
       "id": 3,
       "title": "Dead Letter Queue Size",
       "type": "stat",
-      "gridPos": { "x": 16, "y": 0, "w": 8, "h": 4 },
+      "gridPos": { "x": 16, "y": 18, "w": 8, "h": 4 },
       "options": {
         "reduceOptions": { "calcs": ["lastNotNull"] },
         "colorMode": "background",
@@ -80,7 +200,7 @@
       "id": 4,
       "title": "Total Posts Processed",
       "type": "stat",
-      "gridPos": { "x": 16, "y": 4, "w": 8, "h": 4 },
+      "gridPos": { "x": 16, "y": 22, "w": 8, "h": 4 },
       "options": {
         "reduceOptions": { "calcs": ["lastNotNull"] },
         "colorMode": "value",
@@ -102,7 +222,7 @@
       "id": 5,
       "title": "Request Latency Percentiles",
       "type": "timeseries",
-      "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 },
+      "gridPos": { "x": 0, "y": 26, "w": 12, "h": 8 },
       "fieldConfig": {
         "defaults": {
           "unit": "s",
@@ -131,7 +251,7 @@
       "id": 6,
       "title": "Kafka Write Rate by Topic",
       "type": "timeseries",
-      "gridPos": { "x": 12, "y": 8, "w": 12, "h": 8 },
+      "gridPos": { "x": 12, "y": 26, "w": 12, "h": 8 },
       "fieldConfig": {
         "defaults": {
           "unit": "reqps",
@@ -150,7 +270,7 @@
       "id": 7,
       "title": "Posts Rate by Platform (per 5m)",
       "type": "timeseries",
-      "gridPos": { "x": 0, "y": 16, "w": 12, "h": 8 },
+      "gridPos": { "x": 0, "y": 34, "w": 12, "h": 8 },
       "fieldConfig": {
         "defaults": {
           "unit": "reqps",
@@ -169,7 +289,7 @@
       "id": 8,
       "title": "Go Goroutines",
       "type": "timeseries",
-      "gridPos": { "x": 12, "y": 16, "w": 6, "h": 8 },
+      "gridPos": { "x": 12, "y": 34, "w": 6, "h": 8 },
       "fieldConfig": {
         "defaults": {
           "unit": "short",
@@ -188,7 +308,7 @@
       "id": 9,
       "title": "Go Heap Memory",
       "type": "timeseries",
-      "gridPos": { "x": 18, "y": 16, "w": 6, "h": 8 },
+      "gridPos": { "x": 18, "y": 34, "w": 6, "h": 8 },
       "fieldConfig": {
         "defaults": {
           "unit": "bytes",
@@ -209,10 +329,40 @@
       ]
     },
     {
+      "id": 10,
+      "title": "Request Duration Heatmap",
+      "type": "heatmap",
+      "gridPos": { "x": 0, "y": 42, "w": 24, "h": 8 },
+      "options": {
+        "calculate": false,
+        "yAxis": { "unit": "s" },
+        "color": { "scheme": "Oranges" }
+      },
+      "fieldConfig": {
+        "defaults": { "unit": "s" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "sum(rate(gateway_request_duration_seconds_bucket[5m])) by (le)",
+          "legendFormat": "{{le}}",
+          "format": "heatmap"
+        }
+      ]
+    },
+
+    {
+      "id": 300,
+      "title": "Kafka",
+      "type": "row",
+      "gridPos": { "x": 0, "y": 50, "w": 24, "h": 1 },
+      "collapsed": false
+    },
+    {
       "id": 11,
       "title": "Kafka Consumer Lag by Topic",
       "type": "timeseries",
-      "gridPos": { "x": 0, "y": 32, "w": 12, "h": 8 },
+      "gridPos": { "x": 0, "y": 51, "w": 12, "h": 8 },
       "fieldConfig": {
         "defaults": {
           "unit": "short",
@@ -239,7 +389,7 @@
       "id": 12,
       "title": "Kafka Consumer Lag by Group",
       "type": "timeseries",
-      "gridPos": { "x": 12, "y": 32, "w": 12, "h": 8 },
+      "gridPos": { "x": 12, "y": 51, "w": 12, "h": 8 },
       "fieldConfig": {
         "defaults": {
           "unit": "short",
@@ -258,7 +408,7 @@
       "id": 13,
       "title": "Kafka Total Lag",
       "type": "stat",
-      "gridPos": { "x": 0, "y": 40, "w": 8, "h": 4 },
+      "gridPos": { "x": 0, "y": 59, "w": 8, "h": 4 },
       "options": {
         "reduceOptions": { "calcs": ["lastNotNull"] },
         "colorMode": "background",
@@ -282,28 +432,6 @@
           "datasource": { "type": "prometheus" },
           "expr": "sum(kafka_consumergroup_lag)",
           "legendFormat": "Total Lag"
-        }
-      ]
-    },
-    {
-      "id": 10,
-      "title": "Request Duration Heatmap",
-      "type": "heatmap",
-      "gridPos": { "x": 0, "y": 24, "w": 24, "h": 8 },
-      "options": {
-        "calculate": false,
-        "yAxis": { "unit": "s" },
-        "color": { "scheme": "Oranges" }
-      },
-      "fieldConfig": {
-        "defaults": { "unit": "s" }
-      },
-      "targets": [
-        {
-          "datasource": { "type": "prometheus" },
-          "expr": "sum(rate(gateway_request_duration_seconds_bucket[5m])) by (le)",
-          "legendFormat": "{{le}}",
-          "format": "heatmap"
         }
       ]
     }

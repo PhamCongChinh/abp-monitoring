@@ -38,3 +38,24 @@ groups:
         annotations:
           summary: "Kafka write thất bại trên topic {{ $labels.topic }}"
           description: "Có lỗi ghi Kafka liên tục 2 phút trên topic {{ $labels.topic }}"
+
+      - alert: GatewayHigh500Rate
+        expr: |
+          sum(rate(gateway_http_errors_total{code="500"}[5m]))
+          /
+          sum(rate(gateway_requests_total[5m])) > 0.01
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Tỉ lệ lỗi 500 vượt 1% ({{ $value | humanizePercentage }})"
+          description: "Tỉ lệ HTTP 500 liên tục > 1% trong 2 phút — kiểm tra logs gateway ngay"
+
+      - alert: GatewayUnknownPlatformBot
+        expr: rate(gateway_unknown_platform_total[10m]) > 100
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Bot gửi platform lạ: {{ $value | humanize }} req/s"
+          description: "Có nguồn gửi liên tục platform không hợp lệ — có thể là bot scan hoặc client lỗi cấu hình"

@@ -41,7 +41,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus" },
-          "expr": "increase(gateway_posts_by_platform_total[$__range])",
+          "expr": "gateway_daily_posts_by_platform",
           "legendFormat": "{{platform}}",
           "instant": true
         }
@@ -96,7 +96,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus" },
-          "expr": "sum(increase(gateway_posts_total[$__range]))",
+          "expr": "sum(gateway_daily_posts_by_platform)",
           "legendFormat": "Total",
           "instant": true
         }
@@ -288,6 +288,76 @@
     },
 
     {
+      "id": 18,
+      "title": "HTTP Errors Today",
+      "type": "stat",
+      "gridPos": { "x": 0, "y": 22, "w": 8, "h": 4 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "textMode": "value_and_name",
+        "orientation": "vertical"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#73BF69", "value": null },
+              { "color": "#F2CC0C", "value": 1 },
+              { "color": "#F2495C", "value": 100 }
+            ]
+          }
+        },
+        "overrides": [
+          { "matcher": { "id": "byRegexp", "options": ".*400.*" }, "properties": [{ "id": "color", "value": { "fixedColor": "#F2CC0C", "mode": "fixed" } }] },
+          { "matcher": { "id": "byRegexp", "options": ".*500.*" }, "properties": [{ "id": "color", "value": { "fixedColor": "#F2495C", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "increase(gateway_http_errors_total[$__range])",
+          "legendFormat": "{{endpoint}} {{code}}",
+          "instant": true
+        }
+      ]
+    },
+
+    {
+      "id": 19,
+      "title": "Unknown Platform Rate",
+      "type": "timeseries",
+      "gridPos": { "x": 8, "y": 22, "w": 8, "h": 4 },
+      "options": {
+        "tooltip": { "mode": "single" }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "custom": { "lineWidth": 2, "fillOpacity": 20, "gradientMode": "opacity" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#73BF69", "value": null },
+              { "color": "#F2CC0C", "value": 10 },
+              { "color": "#F2495C", "value": 100 }
+            ]
+          },
+          "color": { "mode": "thresholds" }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "rate(gateway_unknown_platform_total[5m])",
+          "legendFormat": "unknown platform req/s"
+        }
+      ]
+    },
+
+    {
       "id": 4,
       "title": "Total Posts Processed (All-time)",
       "type": "stat",
@@ -454,7 +524,7 @@
 
     {
       "id": 15,
-      "title": "HTTP Error Rate",
+      "title": "HTTP Error Rate (4xx / 5xx)",
       "type": "timeseries",
       "gridPos": { "x": 0, "y": 42, "w": 12, "h": 8 },
       "fieldConfig": {
@@ -472,12 +542,12 @@
       "targets": [
         {
           "datasource": { "type": "prometheus" },
-          "expr": "sum(rate(gateway_requests_total{status=~\"4..\"}[5m])) / sum(rate(gateway_requests_total[5m]))",
+          "expr": "sum(rate(gateway_http_errors_total{code=~\"4..\"}[5m])) / sum(rate(gateway_requests_total[5m]))",
           "legendFormat": "4xx rate"
         },
         {
           "datasource": { "type": "prometheus" },
-          "expr": "sum(rate(gateway_requests_total{status=~\"5..\"}[5m])) / sum(rate(gateway_requests_total[5m]))",
+          "expr": "sum(rate(gateway_http_errors_total{code=~\"5..\"}[5m])) / sum(rate(gateway_requests_total[5m]))",
           "legendFormat": "5xx rate"
         }
       ]

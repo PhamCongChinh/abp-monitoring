@@ -103,6 +103,9 @@ services:
     restart: unless-stopped
     environment:
       - MONGODB_URI=mongodb://host.docker.internal:5525
+    command:
+      - '--collect-all'
+      - '--compatible-mode'
     extra_hosts:
       - "host.docker.internal:host-gateway"
     logging:

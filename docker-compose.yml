@@ -88,7 +88,8 @@ services:
     container_name: redis-exporter
     restart: unless-stopped
     environment:
-      - REDIS_ADDR=redis://host.docker.internal:6380
+      - REDIS_ADDR=${REDIS_ADDR}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     logging:

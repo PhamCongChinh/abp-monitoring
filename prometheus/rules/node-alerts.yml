@@ -19,23 +19,26 @@ groups:
           summary: "RAM sắp hết trên {{ $labels.instance }}"
           description: "RAM còn lại dưới 10% (hiện tại: {{ $value | humanize }}%)"
 
-      - alert: HostOutOfDiskSpace
-        expr: (1 - node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) * 100 > 90
+      - alert: HostDiskWarning
+        expr: (1 - node_filesystem_avail_bytes{mountpoint="/",fstype!~"tmpfs"} / node_filesystem_size_bytes{mountpoint="/",fstype!~"tmpfs"}) * 100 > 80
         for: 5m
         labels:
-          severity: critical
+          severity: warning
         annotations:
-          summary: "Disk sắp đầy trên {{ $labels.instance }}"
-          description: "Phân vùng / đã dùng trên 90% (hiện tại: {{ $value | humanize }}%)"
+          summary: "⚠️ Disk trên 80% tại {{ $labels.instance }}"
+          description: "Phân vùng / đã dùng {{ $value | printf \"%.1f\" }}% — cần dọn sớm trước khi Mongo/Kafka bị ảnh hưởng"
+
 
       - alert: HostSwapUsageHigh
-        expr: node_memory_SwapTotal_bytes > 0 and (1 - (node_memory_SwapFree_bytes / node_memory_SwapTotal_bytes)) * 100 > 80
+        expr: |
+          (1 - (node_memory_SwapFree_bytes / node_memory_SwapTotal_bytes)) * 100 > 80
+          and node_memory_SwapTotal_bytes > 0
         for: 10m
         labels:
           severity: warning
         annotations:
           summary: "Swap cao trên {{ $labels.instance }}"
-          description: "Swap đã dùng trên 80% (hiện tại: {{ $value | humanize }}%)"
+          description: "Swap đã dùng trên 80% (hiện tại: {{ $value | printf \"%.1f\" }}%)"
 
       - alert: NodeExporterDown
         expr: up{job=~"node-exporter.*"} == 0

@@ -20,7 +20,7 @@
       "id": 501,
       "title": "Tổng bài hôm nay",
       "type": "stat",
-      "gridPos": { "x": 0, "y": 1, "w": 4, "h": 4 },
+      "gridPos": { "x": 0, "y": 1, "w": 4, "h": 8 },
       "options": {
         "reduceOptions": { "calcs": ["lastNotNull"] },
         "colorMode": "background",
@@ -119,7 +119,7 @@
       "id": 504,
       "title": "Xu hướng bài theo giờ hôm nay",
       "type": "timeseries",
-      "gridPos": { "x": 0, "y": 5, "w": 16, "h": 8 },
+      "gridPos": { "x": 0, "y": 9, "w": 16, "h": 8 },
       "fieldConfig": {
         "defaults": {
           "unit": "short",
@@ -146,7 +146,7 @@
       "id": 2,
       "title": "Request Rate (req/s)",
       "type": "timeseries",
-      "gridPos": { "x": 8, "y": 18, "w": 8, "h": 8 },
+      "gridPos": { "x": 16, "y": 13, "w": 8, "h": 4 },
       "fieldConfig": {
         "defaults": {
           "unit": "reqps",
@@ -166,7 +166,7 @@
       "id": 3,
       "title": "Dead Letter Queue",
       "type": "stat",
-      "gridPos": { "x": 16, "y": 18, "w": 4, "h": 4 },
+      "gridPos": { "x": 16, "y": 9, "w": 4, "h": 4 },
       "options": {
         "reduceOptions": { "calcs": ["lastNotNull"] },
         "colorMode": "background",
@@ -199,7 +199,7 @@
       "id": 14,
       "title": "Kafka Success Rate",
       "type": "gauge",
-      "gridPos": { "x": 20, "y": 18, "w": 4, "h": 4 },
+      "gridPos": { "x": 20, "y": 9, "w": 4, "h": 4 },
       "options": {
         "reduceOptions": { "calcs": ["lastNotNull"] },
         "orientation": "auto",

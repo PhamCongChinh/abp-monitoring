@@ -14,7 +14,7 @@ groups:
           description: "{{ $labels.job }} tại {{ $labels.instance }} không phản hồi hơn 2 phút"
 
       - alert: PlatformNoData2h
-        expr: increase(gateway_posts_by_platform_total{platform!="news_page"}[2h]) == 0
+        expr: increase(gateway_posts_by_platform_total{platform!~"news_page|x|tt|tiktok"}[2h]) == 0
         for: 5m
         labels:
           severity: critical

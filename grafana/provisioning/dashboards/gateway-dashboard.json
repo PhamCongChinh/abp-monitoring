@@ -326,12 +326,13 @@
 
     {
       "id": 7,
-      "title": "Posts Rate by Platform (per 5m)",
+      "title": "Số bài theo nền tảng (cửa sổ 5m)",
       "type": "timeseries",
       "gridPos": { "x": 0, "y": 34, "w": 12, "h": 8 },
       "fieldConfig": {
         "defaults": {
-          "unit": "reqps",
+          "unit": "short",
+          "decimals": 0,
           "custom": { "lineWidth": 2, "fillOpacity": 10, "gradientMode": "opacity" }
         },
         "overrides": [
@@ -346,7 +347,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus" },
-          "expr": "rate(gateway_posts_by_platform_total{platform!=\"news_page\"}[5m])",
+          "expr": "increase(gateway_posts_by_platform_total{platform!=\"news_page\"}[5m])",
           "legendFormat": "{{platform}}"
         }
       ]

@@ -18,12 +18,13 @@
 
     {
       "id": 101,
-      "title": "Posts Rate by Platform",
+      "title": "Số bài theo nền tảng (cửa sổ 5m)",
       "type": "timeseries",
       "gridPos": { "x": 0, "y": 1, "w": 12, "h": 8 },
       "fieldConfig": {
         "defaults": {
-          "unit": "reqps",
+          "unit": "short",
+          "decimals": 0,
           "custom": { "lineWidth": 2, "fillOpacity": 12, "gradientMode": "opacity" }
         },
         "overrides": [
@@ -37,7 +38,7 @@
       },
       "targets": [{
         "datasource": { "type": "prometheus" },
-        "expr": "rate(gateway_posts_by_platform_total{platform!=\"news_page\"}[5m])",
+        "expr": "increase(gateway_posts_by_platform_total{platform!=\"news_page\"}[5m])",
         "legendFormat": "{{platform}}"
       }]
     },

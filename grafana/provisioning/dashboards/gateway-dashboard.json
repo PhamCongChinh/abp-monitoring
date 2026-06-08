@@ -2,7 +2,7 @@
   "uid": "gateway-overview",
   "title": "Gateway Overview",
   "tags": ["gateway", "golang"],
-  "timezone": "browser",
+  "timezone": "Asia/Ho_Chi_Minh",
   "schemaVersion": 39,
   "refresh": "30s",
   "time": { "from": "now/d", "to": "now" },
@@ -119,7 +119,6 @@
       "id": 504,
       "title": "Tốc độ bài/giờ theo nền tảng",
       "type": "timeseries",
-      "timeFrom": "3h",
       "gridPos": { "x": 0, "y": 9, "w": 16, "h": 8 },
       "fieldConfig": {
         "defaults": {
@@ -148,7 +147,6 @@
       "id": 2,
       "title": "Request Rate (req/s)",
       "type": "timeseries",
-      "timeFrom": "3h",
       "gridPos": { "x": 16, "y": 13, "w": 8, "h": 4 },
       "fieldConfig": {
         "defaults": {
@@ -237,7 +235,6 @@
       "id": 19,
       "title": "Unknown Platform Rate",
       "type": "timeseries",
-      "timeFrom": "3h",
       "gridPos": { "x": 8, "y": 22, "w": 8, "h": 4 },
       "options": {
         "tooltip": { "mode": "single" }
@@ -271,7 +268,6 @@
       "id": 5,
       "title": "Request Latency Percentiles",
       "type": "timeseries",
-      "timeFrom": "3h",
       "gridPos": { "x": 0, "y": 26, "w": 12, "h": 8 },
       "fieldConfig": {
         "defaults": {
@@ -307,7 +303,6 @@
       "id": 6,
       "title": "Kafka Write Rate by Topic",
       "type": "timeseries",
-      "timeFrom": "3h",
       "gridPos": { "x": 12, "y": 26, "w": 12, "h": 8 },
       "fieldConfig": {
         "defaults": {
@@ -333,7 +328,6 @@
       "id": 7,
       "title": "Số bài theo nền tảng (cửa sổ 5m)",
       "type": "timeseries",
-      "timeFrom": "3h",
       "gridPos": { "x": 0, "y": 34, "w": 12, "h": 8 },
       "fieldConfig": {
         "defaults": {
@@ -363,7 +357,6 @@
       "id": 8,
       "title": "Go Goroutines",
       "type": "timeseries",
-      "timeFrom": "3h",
       "gridPos": { "x": 12, "y": 34, "w": 6, "h": 8 },
       "fieldConfig": {
         "defaults": {
@@ -385,7 +378,6 @@
       "id": 9,
       "title": "Go Heap Memory",
       "type": "timeseries",
-      "timeFrom": "3h",
       "gridPos": { "x": 18, "y": 34, "w": 6, "h": 8 },
       "fieldConfig": {
         "defaults": {
@@ -415,7 +407,6 @@
       "id": 15,
       "title": "HTTP Error Rate (4xx / 5xx)",
       "type": "timeseries",
-      "timeFrom": "3h",
       "gridPos": { "x": 0, "y": 42, "w": 12, "h": 8 },
       "fieldConfig": {
         "defaults": {
@@ -447,7 +438,6 @@
       "id": 10,
       "title": "Request Duration Heatmap",
       "type": "heatmap",
-      "timeFrom": "3h",
       "gridPos": { "x": 12, "y": 42, "w": 12, "h": 8 },
       "options": {
         "calculate": false,
@@ -479,7 +469,6 @@
       "id": 11,
       "title": "Kafka Consumer Lag by Topic",
       "type": "timeseries",
-      "timeFrom": "3h",
       "gridPos": { "x": 0, "y": 51, "w": 12, "h": 8 },
       "fieldConfig": {
         "defaults": {
@@ -508,7 +497,6 @@
       "id": 12,
       "title": "Kafka Consumer Lag by Group",
       "type": "timeseries",
-      "timeFrom": "3h",
       "gridPos": { "x": 12, "y": 51, "w": 12, "h": 8 },
       "fieldConfig": {
         "defaults": {
@@ -596,7 +584,6 @@
       "id": 17,
       "title": "Kafka Write Success vs Error",
       "type": "timeseries",
-      "timeFrom": "3h",
       "gridPos": { "x": 16, "y": 59, "w": 8, "h": 8 },
       "fieldConfig": {
         "defaults": {
@@ -787,7 +774,6 @@
       "id": 406,
       "title": "Operations per Second",
       "type": "timeseries",
-      "timeFrom": "3h",
       "gridPos": { "x": 0, "y": 72, "w": 12, "h": 8 },
       "fieldConfig": {
         "defaults": {
@@ -815,7 +801,6 @@
       "id": 407,
       "title": "Connections Over Time",
       "type": "timeseries",
-      "timeFrom": "3h",
       "gridPos": { "x": 12, "y": 72, "w": 12, "h": 8 },
       "fieldConfig": {
         "defaults": {
@@ -845,7 +830,6 @@
       "id": 408,
       "title": "Memory Usage Over Time",
       "type": "timeseries",
-      "timeFrom": "3h",
       "gridPos": { "x": 0, "y": 80, "w": 12, "h": 8 },
       "fieldConfig": {
         "defaults": {
@@ -875,7 +859,6 @@
       "id": 409,
       "title": "Network In/Out",
       "type": "timeseries",
-      "timeFrom": "3h",
       "gridPos": { "x": 12, "y": 80, "w": 12, "h": 8 },
       "fieldConfig": {
         "defaults": {

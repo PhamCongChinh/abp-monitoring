@@ -19,5 +19,4 @@ jobs:
           script: |
             cd ~/abp-monitor-system
             git pull origin main
-            docker compose pull --quiet
             docker compose up -d --remove-orphans

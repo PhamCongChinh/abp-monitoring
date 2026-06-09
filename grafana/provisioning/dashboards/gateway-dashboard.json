@@ -2,10 +2,10 @@
   "uid": "gateway-overview",
   "title": "Gateway Overview",
   "tags": ["gateway", "golang"],
-  "timezone": "browser",
+  "timezone": "Asia/Ho_Chi_Minh",
   "schemaVersion": 39,
   "refresh": "30s",
-  "time": { "from": "now/h", "to": "now" },
+  "time": { "from": "now/d", "to": "now" },
   "panels": [
 
     {

@@ -169,6 +169,7 @@ services:
       - GF_ANALYTICS_REPORTING_ENABLED=false
       - GF_ANALYTICS_CHECK_FOR_UPDATES=false
       - GF_INSTALL_PLUGINS=
+      - GF_DEFAULT_TIMEZONE=Asia/Ho_Chi_Minh
     depends_on:
       - prometheus
     logging:

@@ -117,7 +117,7 @@ services:
         max-file: "3"
 
   postgres-exporter:
-    image: prometheuscommunity/postgres_exporter:v0.15.0
+    image: quay.io/prometheuscommunity/postgres_exporter:v0.15.0
     container_name: postgres-exporter
     restart: unless-stopped
     environment:

@@ -146,7 +146,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus" },
-          "expr": "rate(gateway_posts_by_platform_total{platform!~\"news_page|tt\"}[$__rate_interval]) * 3600",
+          "expr": "rate(gateway_posts_by_platform_total{platform!~\"news_page|tt\"}[15m]) * 3600",
           "legendFormat": "{{platform}}"
         }
       ]

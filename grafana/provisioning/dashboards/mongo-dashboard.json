@@ -1,0 +1,493 @@
+{
+  "uid": "mongo-overview",
+  "title": "MongoDB Overview",
+  "tags": ["mongodb", "database"],
+  "timezone": "Asia/Ho_Chi_Minh",
+  "schemaVersion": 39,
+  "refresh": "30s",
+  "time": { "from": "now-3h", "to": "now" },
+  "panels": [
+
+    {
+      "id": 100,
+      "title": "Tổng quan",
+      "type": "row",
+      "gridPos": { "x": 0, "y": 0, "w": 24, "h": 1 },
+      "collapsed": false
+    },
+
+    {
+      "id": 101,
+      "title": "MongoDB Status",
+      "type": "stat",
+      "gridPos": { "x": 0, "y": 1, "w": 4, "h": 4 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "textMode": "auto",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            { "type": "value", "options": { "0": { "text": "DOWN", "color": "#F2495C" }, "1": { "text": "UP", "color": "#73BF69" } } }
+          ],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "#F2495C", "value": null }, { "color": "#73BF69", "value": 1 }] }
+        }
+      },
+      "targets": [{ "datasource": { "type": "prometheus" }, "expr": "mongodb_up", "legendFormat": "MongoDB", "instant": true }]
+    },
+
+    {
+      "id": 102,
+      "title": "Kết nối hiện tại",
+      "type": "stat",
+      "gridPos": { "x": 4, "y": 1, "w": 4, "h": 4 },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "textMode": "auto", "graphMode": "area" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "#73BF69", "value": null }, { "color": "#F2CC0C", "value": 300 }, { "color": "#F2495C", "value": 700 }] }
+        }
+      },
+      "targets": [{ "datasource": { "type": "prometheus" }, "expr": "mongodb_connections{state=\"current\"}", "legendFormat": "current", "instant": true }]
+    },
+
+    {
+      "id": 103,
+      "title": "Kết nối khả dụng",
+      "type": "stat",
+      "gridPos": { "x": 8, "y": 1, "w": 4, "h": 4 },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "textMode": "auto", "graphMode": "none" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": { "mode": "fixed", "fixedColor": "#73BF69" }
+        }
+      },
+      "targets": [{ "datasource": { "type": "prometheus" }, "expr": "mongodb_connections{state=\"available\"}", "legendFormat": "available", "instant": true }]
+    },
+
+    {
+      "id": 104,
+      "title": "% Kết nối đã dùng",
+      "type": "gauge",
+      "gridPos": { "x": 12, "y": 1, "w": 6, "h": 4 },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "orientation": "auto", "showThresholdMarkers": true },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent", "min": 0, "max": 100,
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "#73BF69", "value": null }, { "color": "#F2CC0C", "value": 60 }, { "color": "#F2495C", "value": 80 }] }
+        }
+      },
+      "targets": [{
+        "datasource": { "type": "prometheus" },
+        "expr": "mongodb_connections{state=\"current\"} / (mongodb_connections{state=\"current\"} + mongodb_connections{state=\"available\"}) * 100",
+        "legendFormat": "used %", "instant": true
+      }]
+    },
+
+    {
+      "id": 105,
+      "title": "Resident Memory",
+      "type": "stat",
+      "gridPos": { "x": 18, "y": 1, "w": 6, "h": 4 },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "textMode": "auto", "graphMode": "area" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "decmbytes",
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "#73BF69", "value": null }, { "color": "#F2CC0C", "value": 1024 }, { "color": "#F2495C", "value": 2048 }] }
+        }
+      },
+      "targets": [{ "datasource": { "type": "prometheus" }, "expr": "mongodb_memory{type=\"resident\"}", "legendFormat": "resident MB", "instant": true }]
+    },
+
+    {
+      "id": 200,
+      "title": "Kết nối theo thời gian",
+      "type": "row",
+      "gridPos": { "x": 0, "y": 5, "w": 24, "h": 1 },
+      "collapsed": false
+    },
+
+    {
+      "id": 201,
+      "title": "Connections Over Time",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 6, "w": 12, "h": 8 },
+      "fieldConfig": {
+        "defaults": { "unit": "short", "custom": { "lineWidth": 2, "fillOpacity": 12, "gradientMode": "opacity" } },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "current" },   "properties": [{ "id": "color", "value": { "fixedColor": "#F2CC0C", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "available" }, "properties": [{ "id": "color", "value": { "fixedColor": "#73BF69", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "mongodb_connections{state=\"current\"}", "legendFormat": "current" },
+        { "datasource": { "type": "prometheus" }, "expr": "mongodb_connections{state=\"available\"}", "legendFormat": "available" }
+      ]
+    },
+
+    {
+      "id": 202,
+      "title": "Tổng kết nối đã tạo (cumulative)",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 6, "w": 12, "h": 8 },
+      "fieldConfig": {
+        "defaults": { "unit": "short", "custom": { "lineWidth": 2, "fillOpacity": 8, "gradientMode": "opacity" }, "color": { "mode": "fixed", "fixedColor": "#5794F2" } }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "rate(mongodb_connections{state=\"totalCreated\"}[5m])", "legendFormat": "new connections/sec" }
+      ]
+    },
+
+    {
+      "id": 300,
+      "title": "Operations (Read / Write)",
+      "type": "row",
+      "gridPos": { "x": 0, "y": 14, "w": 24, "h": 1 },
+      "collapsed": false
+    },
+
+    {
+      "id": 301,
+      "title": "Operations/sec theo loại  ⭐",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 15, "w": 16, "h": 8 },
+      "fieldConfig": {
+        "defaults": { "unit": "ops", "custom": { "lineWidth": 2, "fillOpacity": 10, "gradientMode": "opacity" } },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "insert" },  "properties": [{ "id": "color", "value": { "fixedColor": "#73BF69", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "query" },   "properties": [{ "id": "color", "value": { "fixedColor": "#5794F2", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "update" },  "properties": [{ "id": "color", "value": { "fixedColor": "#F2CC0C", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "delete" },  "properties": [{ "id": "color", "value": { "fixedColor": "#F2495C", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "command" }, "properties": [{ "id": "color", "value": { "fixedColor": "#A0A0A0", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "getmore" }, "properties": [{ "id": "color", "value": { "fixedColor": "#B877D9", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "rate(mongodb_op_counters_total[5m])", "legendFormat": "{{type}}" }
+      ]
+    },
+
+    {
+      "id": 302,
+      "title": "Write vs Read ratio",
+      "type": "gauge",
+      "gridPos": { "x": 16, "y": 15, "w": 8, "h": 8 },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "orientation": "auto", "showThresholdMarkers": true },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent", "min": 0, "max": 100,
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "#5794F2", "value": null }, { "color": "#F2CC0C", "value": 60 }, { "color": "#F2495C", "value": 85 }] }
+        }
+      },
+      "targets": [{
+        "datasource": { "type": "prometheus" },
+        "expr": "(rate(mongodb_op_counters_total{type=~\"insert|update|delete\"}[5m])) / (rate(mongodb_op_counters_total[5m]) > 0) * 100",
+        "legendFormat": "write %", "instant": true
+      }]
+    },
+
+    {
+      "id": 400,
+      "title": "Bộ nhớ & WiredTiger Cache",
+      "type": "row",
+      "gridPos": { "x": 0, "y": 23, "w": 24, "h": 1 },
+      "collapsed": false
+    },
+
+    {
+      "id": 401,
+      "title": "Memory Usage (MB)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 24, "w": 12, "h": 8 },
+      "fieldConfig": {
+        "defaults": { "unit": "decmbytes", "custom": { "lineWidth": 2, "fillOpacity": 15, "gradientMode": "opacity" } },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "resident" }, "properties": [{ "id": "color", "value": { "fixedColor": "#F2495C", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "virtual" },  "properties": [{ "id": "color", "value": { "fixedColor": "#F2CC0C", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "mapped" },   "properties": [{ "id": "color", "value": { "fixedColor": "#5794F2", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "mongodb_memory{type=\"resident\"}", "legendFormat": "resident" },
+        { "datasource": { "type": "prometheus" }, "expr": "mongodb_memory{type=\"virtual\"}",  "legendFormat": "virtual" },
+        { "datasource": { "type": "prometheus" }, "expr": "mongodb_memory{type=\"mapped\"}",   "legendFormat": "mapped" }
+      ]
+    },
+
+    {
+      "id": 402,
+      "title": "WiredTiger Cache Used vs Total  ⭐",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 24, "w": 12, "h": 8 },
+      "fieldConfig": {
+        "defaults": { "unit": "bytes", "custom": { "lineWidth": 2, "fillOpacity": 10, "gradientMode": "opacity" } },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "cache used" },        "properties": [{ "id": "color", "value": { "fixedColor": "#F2CC0C", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "cache total" },       "properties": [{ "id": "color", "value": { "fixedColor": "#73BF69", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "dirty bytes" },       "properties": [{ "id": "color", "value": { "fixedColor": "#F2495C", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "mongodb_wiredtiger_cache_bytes{type=\"currently_in_cache\"}", "legendFormat": "cache used" },
+        { "datasource": { "type": "prometheus" }, "expr": "mongodb_wiredtiger_cache_bytes{type=\"maximum_bytes_configured\"}", "legendFormat": "cache total" },
+        { "datasource": { "type": "prometheus" }, "expr": "mongodb_wiredtiger_cache_bytes{type=\"tracked_dirty_bytes_in_cache\"}", "legendFormat": "dirty bytes" }
+      ]
+    },
+
+    {
+      "id": 403,
+      "title": "WiredTiger Pages Evicted/sec",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 32, "w": 12, "h": 6 },
+      "fieldConfig": {
+        "defaults": { "unit": "ops", "custom": { "lineWidth": 2, "fillOpacity": 8, "gradientMode": "opacity" } },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "modified" },   "properties": [{ "id": "color", "value": { "fixedColor": "#F2495C", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "unmodified" }, "properties": [{ "id": "color", "value": { "fixedColor": "#A0A0A0", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "rate(mongodb_wiredtiger_cache_pages_evicted_total{type=\"modified\"}[5m])",   "legendFormat": "modified" },
+        { "datasource": { "type": "prometheus" }, "expr": "rate(mongodb_wiredtiger_cache_pages_evicted_total{type=\"unmodified\"}[5m])", "legendFormat": "unmodified" }
+      ]
+    },
+
+    {
+      "id": 404,
+      "title": "WiredTiger Transactions/sec",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 32, "w": 12, "h": 6 },
+      "fieldConfig": {
+        "defaults": { "unit": "ops", "custom": { "lineWidth": 2, "fillOpacity": 8, "gradientMode": "opacity" } },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "begins" },    "properties": [{ "id": "color", "value": { "fixedColor": "#73BF69", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "committed" }, "properties": [{ "id": "color", "value": { "fixedColor": "#5794F2", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "rolledback" },"properties": [{ "id": "color", "value": { "fixedColor": "#F2495C", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "rate(mongodb_wiredtiger_transactions_total{type=\"begins\"}[5m])",     "legendFormat": "begins" },
+        { "datasource": { "type": "prometheus" }, "expr": "rate(mongodb_wiredtiger_transactions_total{type=\"committed\"}[5m])",  "legendFormat": "committed" },
+        { "datasource": { "type": "prometheus" }, "expr": "rate(mongodb_wiredtiger_transactions_total{type=\"rolledback\"}[5m])", "legendFormat": "rolledback" }
+      ]
+    },
+
+    {
+      "id": 500,
+      "title": "Network",
+      "type": "row",
+      "gridPos": { "x": 0, "y": 38, "w": 24, "h": 1 },
+      "collapsed": false
+    },
+
+    {
+      "id": 501,
+      "title": "Network Throughput (bytes/sec)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 39, "w": 12, "h": 7 },
+      "fieldConfig": {
+        "defaults": { "unit": "Bps", "custom": { "lineWidth": 2, "fillOpacity": 12, "gradientMode": "opacity" } },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "bytes in" },  "properties": [{ "id": "color", "value": { "fixedColor": "#73BF69", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "bytes out" }, "properties": [{ "id": "color", "value": { "fixedColor": "#5794F2", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "rate(mongodb_network_bytes_in_total[5m])",  "legendFormat": "bytes in" },
+        { "datasource": { "type": "prometheus" }, "expr": "rate(mongodb_network_bytes_out_total[5m])", "legendFormat": "bytes out" }
+      ]
+    },
+
+    {
+      "id": 502,
+      "title": "Network Requests/sec",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 39, "w": 12, "h": 7 },
+      "fieldConfig": {
+        "defaults": { "unit": "reqps", "custom": { "lineWidth": 2, "fillOpacity": 10, "gradientMode": "opacity" }, "color": { "mode": "fixed", "fixedColor": "#B877D9" } }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "rate(mongodb_network_num_requests_total[5m])", "legendFormat": "requests/sec" }
+      ]
+    },
+
+    {
+      "id": 600,
+      "title": "Database Stats",
+      "type": "row",
+      "gridPos": { "x": 0, "y": 46, "w": 24, "h": 1 },
+      "collapsed": false
+    },
+
+    {
+      "id": 601,
+      "title": "Kích thước Database",
+      "type": "bargauge",
+      "gridPos": { "x": 0, "y": 47, "w": 8, "h": 8 },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "orientation": "horizontal", "displayMode": "gradient", "showUnfilled": true },
+      "fieldConfig": {
+        "defaults": { "unit": "bytes", "min": 0, "thresholds": { "mode": "absolute", "steps": [{ "color": "#5794F2", "value": null }] } }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "mongodb_dbstats_data_bytes", "legendFormat": "{{db}}", "instant": true }
+      ]
+    },
+
+    {
+      "id": 602,
+      "title": "Storage Size",
+      "type": "bargauge",
+      "gridPos": { "x": 8, "y": 47, "w": 8, "h": 8 },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "orientation": "horizontal", "displayMode": "gradient", "showUnfilled": true },
+      "fieldConfig": {
+        "defaults": { "unit": "bytes", "min": 0, "thresholds": { "mode": "absolute", "steps": [{ "color": "#F2CC0C", "value": null }] } }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "mongodb_dbstats_storage_bytes", "legendFormat": "{{db}}", "instant": true }
+      ]
+    },
+
+    {
+      "id": 603,
+      "title": "Index Size",
+      "type": "bargauge",
+      "gridPos": { "x": 16, "y": 47, "w": 8, "h": 8 },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "orientation": "horizontal", "displayMode": "gradient", "showUnfilled": true },
+      "fieldConfig": {
+        "defaults": { "unit": "bytes", "min": 0, "thresholds": { "mode": "absolute", "steps": [{ "color": "#73BF69", "value": null }] } }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "mongodb_dbstats_index_size_bytes", "legendFormat": "{{db}}", "instant": true }
+      ]
+    },
+
+    {
+      "id": 604,
+      "title": "Collections & Objects",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 55, "w": 12, "h": 7 },
+      "fieldConfig": {
+        "defaults": { "unit": "short", "custom": { "lineWidth": 2, "fillOpacity": 8, "gradientMode": "opacity" } },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "collections" }, "properties": [{ "id": "color", "value": { "fixedColor": "#5794F2", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "indexes" },     "properties": [{ "id": "color", "value": { "fixedColor": "#73BF69", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "sum(mongodb_dbstats_collections)", "legendFormat": "collections" },
+        { "datasource": { "type": "prometheus" }, "expr": "sum(mongodb_dbstats_indexes)",     "legendFormat": "indexes" }
+      ]
+    },
+
+    {
+      "id": 605,
+      "title": "Objects Count theo DB",
+      "type": "bargauge",
+      "gridPos": { "x": 12, "y": 55, "w": 12, "h": 7 },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "orientation": "horizontal", "displayMode": "gradient", "showUnfilled": true },
+      "fieldConfig": {
+        "defaults": { "unit": "short", "min": 0, "thresholds": { "mode": "absolute", "steps": [{ "color": "#A0A0A0", "value": null }] } }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "mongodb_dbstats_objects", "legendFormat": "{{db}}", "instant": true }
+      ]
+    },
+
+    {
+      "id": 700,
+      "title": "Locks & Cursors",
+      "type": "row",
+      "gridPos": { "x": 0, "y": 62, "w": 24, "h": 1 },
+      "collapsed": false
+    },
+
+    {
+      "id": 701,
+      "title": "Open Cursors",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 63, "w": 12, "h": 7 },
+      "fieldConfig": {
+        "defaults": { "unit": "short", "custom": { "lineWidth": 2, "fillOpacity": 10, "gradientMode": "opacity" } },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "total" },     "properties": [{ "id": "color", "value": { "fixedColor": "#F2CC0C", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "no timeout" },"properties": [{ "id": "color", "value": { "fixedColor": "#F2495C", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "pinned" },    "properties": [{ "id": "color", "value": { "fixedColor": "#B877D9", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "mongodb_metrics_cursor_open{state=\"total\"}",     "legendFormat": "total" },
+        { "datasource": { "type": "prometheus" }, "expr": "mongodb_metrics_cursor_open{state=\"noTimeout\"}", "legendFormat": "no timeout" },
+        { "datasource": { "type": "prometheus" }, "expr": "mongodb_metrics_cursor_open{state=\"pinned\"}",   "legendFormat": "pinned" }
+      ]
+    },
+
+    {
+      "id": 702,
+      "title": "Lock Wait Time (µs/sec)  ⭐",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 63, "w": 12, "h": 7 },
+      "fieldConfig": {
+        "defaults": { "unit": "µs", "custom": { "lineWidth": 2, "fillOpacity": 12, "gradientMode": "opacity" } },
+        "overrides": [
+          { "matcher": { "id": "byRegexp", "options": ".*write.*" }, "properties": [{ "id": "color", "value": { "fixedColor": "#F2495C", "mode": "fixed" } }] },
+          { "matcher": { "id": "byRegexp", "options": ".*read.*" },  "properties": [{ "id": "color", "value": { "fixedColor": "#5794F2", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "rate(mongodb_locks_time_acquiring_micros_total[5m])", "legendFormat": "{{type}} - {{mode}}" }
+      ]
+    },
+
+    {
+      "id": 800,
+      "title": "Asserts & Errors",
+      "type": "row",
+      "gridPos": { "x": 0, "y": 70, "w": 24, "h": 1 },
+      "collapsed": false
+    },
+
+    {
+      "id": 801,
+      "title": "Asserts/sec",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 71, "w": 12, "h": 7 },
+      "fieldConfig": {
+        "defaults": { "unit": "ops", "custom": { "lineWidth": 2, "fillOpacity": 10, "gradientMode": "opacity" } },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "user" },     "properties": [{ "id": "color", "value": { "fixedColor": "#F2CC0C", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "regular" },  "properties": [{ "id": "color", "value": { "fixedColor": "#A0A0A0", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "warning" },  "properties": [{ "id": "color", "value": { "fixedColor": "#F2495C", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "msg" },      "properties": [{ "id": "color", "value": { "fixedColor": "#B877D9", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "rate(mongodb_asserts_total[5m])", "legendFormat": "{{type}}" }
+      ]
+    },
+
+    {
+      "id": 802,
+      "title": "Replication Lag (nếu có Replica Set)",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 71, "w": 12, "h": 7 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": { "lineWidth": 2, "fillOpacity": 10, "gradientMode": "opacity" },
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "#73BF69", "value": null }, { "color": "#F2CC0C", "value": 10 }, { "color": "#F2495C", "value": 60 }] }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "max(mongodb_replset_member_optime_date{state=\"SECONDARY\"}) - min(mongodb_replset_member_optime_date{state=\"PRIMARY\"})",
+          "legendFormat": "replication lag (s)"
+        }
+      ]
+    }
+
+  ]
+}

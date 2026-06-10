@@ -1,45 +1,6 @@
 groups:
   - name: node_alerts
     rules:
-      - alert: HostHighCpuLoad
-        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 85
-        for: 5m
-        labels:
-          severity: warning
-        annotations:
-          summary: "CPU cao trên {{ $labels.instance }}"
-          description: "CPU vượt 85% liên tục 5 phút (hiện tại: {{ $value | humanize }}%)"
-
-      - alert: HostOutOfMemory
-        expr: (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100 < 10
-        for: 5m
-        labels:
-          severity: critical
-        annotations:
-          summary: "RAM sắp hết trên {{ $labels.instance }}"
-          description: "RAM còn lại dưới 10% (hiện tại: {{ $value | humanize }}%)"
-
-      - alert: HostDiskWarning
-        expr: (1 - node_filesystem_avail_bytes{mountpoint="/",fstype!~"tmpfs"} / node_filesystem_size_bytes{mountpoint="/",fstype!~"tmpfs"}) * 100 > 80
-        for: 5m
-        labels:
-          severity: warning
-        annotations:
-          summary: "⚠️ Disk trên 80% tại {{ $labels.instance }}"
-          description: "Phân vùng / đã dùng {{ $value | printf \"%.1f\" }}% — cần dọn sớm trước khi Mongo/Kafka bị ảnh hưởng"
-
-
-      # - alert: HostSwapUsageHigh
-      #   expr: |
-      #     (1 - (node_memory_SwapFree_bytes / node_memory_SwapTotal_bytes)) * 100 > 80
-      #     and node_memory_SwapTotal_bytes > 0
-      #   for: 10m
-      #   labels:
-      #     severity: warning
-      #   annotations:
-      #     summary: "Swap cao trên {{ $labels.instance }}"
-      #     description: "Swap đã dùng trên 80% (hiện tại: {{ $value | printf \"%.1f\" }}%)"
-
       - alert: NodeExporterDown
         expr: up{job=~"node-exporter.*"} == 0
         for: 2m

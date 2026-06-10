@@ -12,15 +12,6 @@ groups:
           summary: "Không có tin bài mới từ <b>{{ $labels.platform }}</b>"
           description: "<b>{{ $labels.platform }}</b> không có bài mới trong 1 giờ qua (tổng: {{ $value | humanize }} bài)"
 
-      - alert: GatewayDown
-        expr: up{job="gateway"} == 0
-        for: 2m
-        labels:
-          severity: critical
-        annotations:
-          summary: "Gateway không phản hồi"
-          description: "Gateway tại {{ $labels.instance }} không scrape được hơn 2 phút"
-
       - alert: GatewayDLQNotEmpty
         expr: gateway_dlq_size > 0
         for: 5m

@@ -67,17 +67,19 @@
           }
         },
         "overrides": [
-          { "matcher": { "id": "byName", "options": "youtube" },  "properties": [{ "id": "color", "value": { "fixedColor": "#FF0000", "mode": "fixed" } }] },
-          { "matcher": { "id": "byName", "options": "facebook" }, "properties": [{ "id": "color", "value": { "fixedColor": "#1877F2", "mode": "fixed" } }] },
-          { "matcher": { "id": "byName", "options": "tiktok" },   "properties": [{ "id": "color", "value": { "fixedColor": "#FE2C55", "mode": "fixed" } }] },
-          { "matcher": { "id": "byName", "options": "web" },      "properties": [{ "id": "color", "value": { "fixedColor": "#00CED1", "mode": "fixed" } }] },
-          { "matcher": { "id": "byName", "options": "thread" },   "properties": [{ "id": "color", "value": { "fixedColor": "#A0A0A0", "mode": "fixed" } }] }
+          { "matcher": { "id": "byName", "options": "youtube" },   "properties": [{ "id": "color", "value": { "fixedColor": "#FF0000", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "facebook" },  "properties": [{ "id": "color", "value": { "fixedColor": "#1877F2", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "tiktok" },    "properties": [{ "id": "color", "value": { "fixedColor": "#FE2C55", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "web" },       "properties": [{ "id": "color", "value": { "fixedColor": "#00CED1", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "thread" },    "properties": [{ "id": "color", "value": { "fixedColor": "#A0A0A0", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "telegram" },  "properties": [{ "id": "color", "value": { "fixedColor": "#26A5E4", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "x" },         "properties": [{ "id": "color", "value": { "fixedColor": "#E7E7E7", "mode": "fixed" } }] }
         ]
       },
       "targets": [
         {
           "datasource": { "type": "prometheus" },
-          "expr": "sort_desc(increase(gateway_posts_by_platform_total{platform!~\"news_page|x|tt\"}[$__range]))",
+          "expr": "sort_desc(increase(gateway_posts_by_platform_total{platform!~\"news_page|tt\"}[$__range]))",
           "legendFormat": "{{platform}}",
           "instant": true
         }

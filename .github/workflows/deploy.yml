@@ -11,6 +11,9 @@ jobs:
     steps:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
@@ -20,6 +23,4 @@ jobs:
           script: |
             cd ~/abp-monitor-system
             git pull origin main
-            TELEGRAM_BOT_TOKEN=$TELEGRAM_BOT_TOKEN \
-            TELEGRAM_CHAT_ID=$TELEGRAM_CHAT_ID \
             bash deploy.sh

@@ -1,0 +1,273 @@
+{
+  "uid": "kafka-mongo-stream",
+  "title": "Kafka → Mongo Stream",
+  "tags": ["stream", "java", "kafka", "mongodb"],
+  "timezone": "Asia/Ho_Chi_Minh",
+  "schemaVersion": 39,
+  "refresh": "30s",
+  "time": { "from": "now-3h", "to": "now" },
+  "panels": [
+
+    {
+      "id": 100,
+      "title": "Tổng quan",
+      "type": "row",
+      "gridPos": { "x": 0, "y": 0, "w": 24, "h": 1 },
+      "collapsed": false
+    },
+
+    {
+      "id": 101,
+      "title": "App Status",
+      "type": "stat",
+      "gridPos": { "x": 0, "y": 1, "w": 4, "h": 4 },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "textMode": "auto", "graphMode": "none" },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            { "type": "value", "options": { "0": { "text": "DOWN", "color": "#F2495C" }, "1": { "text": "UP", "color": "#73BF69" } } }
+          ],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "#F2495C", "value": null }, { "color": "#73BF69", "value": 1 }] }
+        }
+      },
+      "targets": [{ "datasource": { "type": "prometheus" }, "expr": "up{job=\"kafka-mongo-stream\"}", "legendFormat": "stream", "instant": true }]
+    },
+
+    {
+      "id": 102,
+      "title": "Upsert hôm nay",
+      "type": "stat",
+      "timeFrom": "now/d",
+      "gridPos": { "x": 4, "y": 1, "w": 5, "h": 4 },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "textMode": "auto", "graphMode": "none" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": { "mode": "fixed", "fixedColor": "#73BF69" }
+        }
+      },
+      "targets": [{
+        "datasource": { "type": "prometheus" },
+        "expr": "sum(increase(kafka_mongo_upsert_total{result=\"success\"}[$__range]))",
+        "legendFormat": "success", "instant": true
+      }]
+    },
+
+    {
+      "id": 103,
+      "title": "Lỗi hôm nay",
+      "type": "stat",
+      "timeFrom": "now/d",
+      "gridPos": { "x": 9, "y": 1, "w": 5, "h": 4 },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "textMode": "auto", "graphMode": "none" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "#73BF69", "value": null }, { "color": "#F2CC0C", "value": 1 }, { "color": "#F2495C", "value": 100 }] }
+        }
+      },
+      "targets": [{
+        "datasource": { "type": "prometheus" },
+        "expr": "sum(increase(kafka_mongo_upsert_total{result=\"failed\"}[$__range]))",
+        "legendFormat": "failed", "instant": true
+      }]
+    },
+
+    {
+      "id": 104,
+      "title": "Success Rate",
+      "type": "gauge",
+      "gridPos": { "x": 14, "y": 1, "w": 5, "h": 4 },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "orientation": "auto", "showThresholdMarkers": true },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent", "min": 0, "max": 100,
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "#F2495C", "value": null }, { "color": "#F2CC0C", "value": 90 }, { "color": "#73BF69", "value": 99 }] }
+        }
+      },
+      "targets": [{
+        "datasource": { "type": "prometheus" },
+        "expr": "sum(rate(kafka_mongo_upsert_total{result=\"success\"}[5m])) / sum(rate(kafka_mongo_upsert_total[5m])) * 100",
+        "legendFormat": "success %", "instant": true
+      }]
+    },
+
+    {
+      "id": 105,
+      "title": "Kafka Consumer Lag",
+      "type": "stat",
+      "gridPos": { "x": 19, "y": 1, "w": 5, "h": 4 },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "textMode": "auto", "graphMode": "area" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "#73BF69", "value": null }, { "color": "#F2CC0C", "value": 500 }, { "color": "#F2495C", "value": 5000 }] }
+        }
+      },
+      "targets": [{
+        "datasource": { "type": "prometheus" },
+        "expr": "sum(kafka_consumergroup_lag{consumergroup=~\".*stream.*|.*mongo.*\"})",
+        "legendFormat": "lag", "instant": true
+      }]
+    },
+
+    {
+      "id": 200,
+      "title": "Throughput",
+      "type": "row",
+      "gridPos": { "x": 0, "y": 5, "w": 24, "h": 1 },
+      "collapsed": false
+    },
+
+    {
+      "id": 201,
+      "title": "Upsert/sec (success vs failed)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 6, "w": 16, "h": 8 },
+      "fieldConfig": {
+        "defaults": { "unit": "ops", "custom": { "lineWidth": 2, "fillOpacity": 12, "gradientMode": "opacity" } },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "success" }, "properties": [{ "id": "color", "value": { "fixedColor": "#73BF69", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "failed" },  "properties": [{ "id": "color", "value": { "fixedColor": "#F2495C", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "sum(rate(kafka_mongo_upsert_total{result=\"success\"}[5m]))", "legendFormat": "success" },
+        { "datasource": { "type": "prometheus" }, "expr": "sum(rate(kafka_mongo_upsert_total{result=\"failed\"}[5m]))",  "legendFormat": "failed" }
+      ]
+    },
+
+    {
+      "id": 202,
+      "title": "Kafka Consumer Lag theo thời gian",
+      "type": "timeseries",
+      "gridPos": { "x": 16, "y": 6, "w": 8, "h": 8 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": { "lineWidth": 2, "fillOpacity": 15, "gradientMode": "opacity" },
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "#73BF69", "value": null }, { "color": "#F2CC0C", "value": 500 }, { "color": "#F2495C", "value": 5000 }] },
+          "color": { "mode": "fixed", "fixedColor": "#F2CC0C" }
+        }
+      },
+      "targets": [{
+        "datasource": { "type": "prometheus" },
+        "expr": "sum(kafka_consumergroup_lag{consumergroup=~\".*stream.*|.*mongo.*\"})",
+        "legendFormat": "consumer lag"
+      }]
+    },
+
+    {
+      "id": 300,
+      "title": "Latency",
+      "type": "row",
+      "gridPos": { "x": 0, "y": 14, "w": 24, "h": 1 },
+      "collapsed": false
+    },
+
+    {
+      "id": 301,
+      "title": "Upsert Latency (p50 / p95 / p99)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 15, "w": 16, "h": 8 },
+      "fieldConfig": {
+        "defaults": { "unit": "s", "custom": { "lineWidth": 2, "fillOpacity": 8, "gradientMode": "opacity" } },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "p50" }, "properties": [{ "id": "color", "value": { "fixedColor": "#73BF69", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "p95" }, "properties": [{ "id": "color", "value": { "fixedColor": "#F2CC0C", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "p99" }, "properties": [{ "id": "color", "value": { "fixedColor": "#F2495C", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "histogram_quantile(0.50, sum(rate(kafka_mongo_upsert_duration_seconds_bucket[5m])) by (le))", "legendFormat": "p50" },
+        { "datasource": { "type": "prometheus" }, "expr": "histogram_quantile(0.95, sum(rate(kafka_mongo_upsert_duration_seconds_bucket[5m])) by (le))", "legendFormat": "p95" },
+        { "datasource": { "type": "prometheus" }, "expr": "histogram_quantile(0.99, sum(rate(kafka_mongo_upsert_duration_seconds_bucket[5m])) by (le))", "legendFormat": "p99" }
+      ]
+    },
+
+    {
+      "id": 302,
+      "title": "Avg Upsert Duration",
+      "type": "stat",
+      "gridPos": { "x": 16, "y": 15, "w": 8, "h": 4 },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "textMode": "auto", "graphMode": "area" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "#73BF69", "value": null }, { "color": "#F2CC0C", "value": 500 }, { "color": "#F2495C", "value": 2000 }] }
+        }
+      },
+      "targets": [{
+        "datasource": { "type": "prometheus" },
+        "expr": "sum(rate(kafka_mongo_upsert_duration_seconds_sum[5m])) / sum(rate(kafka_mongo_upsert_duration_seconds_count[5m])) * 1000",
+        "legendFormat": "avg ms", "instant": true
+      }]
+    },
+
+    {
+      "id": 303,
+      "title": "Max Upsert Duration",
+      "type": "stat",
+      "gridPos": { "x": 16, "y": 19, "w": 8, "h": 4 },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "textMode": "auto", "graphMode": "area" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "#73BF69", "value": null }, { "color": "#F2CC0C", "value": 1000 }, { "color": "#F2495C", "value": 5000 }] }
+        }
+      },
+      "targets": [{
+        "datasource": { "type": "prometheus" },
+        "expr": "histogram_quantile(1.0, sum(rate(kafka_mongo_upsert_duration_seconds_bucket[5m])) by (le)) * 1000",
+        "legendFormat": "max ms", "instant": true
+      }]
+    },
+
+    {
+      "id": 400,
+      "title": "JVM Health",
+      "type": "row",
+      "gridPos": { "x": 0, "y": 23, "w": 24, "h": 1 },
+      "collapsed": false
+    },
+
+    {
+      "id": 401,
+      "title": "JVM Heap Used",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 24, "w": 12, "h": 7 },
+      "fieldConfig": {
+        "defaults": { "unit": "bytes", "custom": { "lineWidth": 2, "fillOpacity": 15, "gradientMode": "opacity" } },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "used" },      "properties": [{ "id": "color", "value": { "fixedColor": "#F2CC0C", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "committed" }, "properties": [{ "id": "color", "value": { "fixedColor": "#73BF69", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "max" },       "properties": [{ "id": "color", "value": { "fixedColor": "#A0A0A0", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "jvm_memory_used_bytes{job=\"kafka-mongo-stream\",area=\"heap\"}",      "legendFormat": "used" },
+        { "datasource": { "type": "prometheus" }, "expr": "jvm_memory_committed_bytes{job=\"kafka-mongo-stream\",area=\"heap\"}", "legendFormat": "committed" },
+        { "datasource": { "type": "prometheus" }, "expr": "jvm_memory_max_bytes{job=\"kafka-mongo-stream\",area=\"heap\"}",       "legendFormat": "max" }
+      ]
+    },
+
+    {
+      "id": 402,
+      "title": "JVM Threads & GC",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 24, "w": 12, "h": 7 },
+      "fieldConfig": {
+        "defaults": { "unit": "short", "custom": { "lineWidth": 2, "fillOpacity": 8, "gradientMode": "opacity" } },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "threads" },  "properties": [{ "id": "color", "value": { "fixedColor": "#5794F2", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "gc pause" }, "properties": [{ "id": "color", "value": { "fixedColor": "#F2495C", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "jvm_threads_live_threads{job=\"kafka-mongo-stream\"}", "legendFormat": "threads" },
+        { "datasource": { "type": "prometheus" }, "expr": "sum(rate(jvm_gc_pause_seconds_sum{job=\"kafka-mongo-stream\"}[5m])) * 1000", "legendFormat": "gc pause (ms/s)" }
+      ]
+    }
+
+  ]
+}

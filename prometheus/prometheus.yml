@@ -2,70 +2,78 @@ global:
   scrape_interval: 15s
   evaluation_interval: 15s
   external_labels:
-    monitor: 'social-listening'
+    monitor: "social-listening"
 
 alerting:
   alertmanagers:
     - static_configs:
-        - targets: ['alertmanager:9093']
+        - targets: ["alertmanager:9093"]
 
 rule_files:
   - /etc/prometheus/rules/*.yml
 
 scrape_configs:
-  - job_name: 'prometheus'
+  - job_name: "prometheus"
     static_configs:
-      - targets: ['localhost:9090']
+      - targets: ["localhost:9090"]
 
   # Scrape thêm alertmanager để biết khi nó down
-  - job_name: 'alertmanager'
+  - job_name: "alertmanager"
     static_configs:
-      - targets: ['alertmanager:9093']
+      - targets: ["alertmanager:9093"]
 
-  - job_name: 'node-exporter-local'
+  - job_name: "node-exporter-local"
     static_configs:
-      - targets: ['host.docker.internal:9101']
+      - targets: ["host.docker.internal:9101"]
         labels:
-          instance: 'vps-main'
-          env: 'production'
+          instance: "vps-main"
+          env: "production"
 
-  - job_name: 'gateway'
+  - job_name: "gateway"
     static_configs:
-      - targets: ['host.docker.internal:4416']
+      - targets: ["host.docker.internal:4416"]
         labels:
-          service: 'gateway'
-          env: 'production'
+          service: "gateway"
+          env: "production"
 
-  - job_name: 'cadvisor'
+  - job_name: "cadvisor"
     static_configs:
-      - targets: ['cadvisor:8080']
+      - targets: ["cadvisor:8080"]
 
-  - job_name: 'kafka-exporter'
+  - job_name: "kafka-exporter"
     static_configs:
-      - targets: ['kafka-exporter:9308']
+      - targets: ["kafka-exporter:9308"]
         labels:
-          service: 'kafka'
+          service: "kafka"
 
-  - job_name: 'mongodb'
+  - job_name: "mongodb"
     static_configs:
-      - targets: ['mongodb-exporter:9216']
+      - targets: ["mongodb-exporter:9216"]
         labels:
-          service: 'mongodb'
-          env: 'production'
+          service: "mongodb"
+          env: "production"
 
-  - job_name: 'redis'
+  - job_name: "redis"
     static_configs:
-      - targets: ['redis-exporter:9121']
+      - targets: ["redis-exporter:9121"]
         labels:
-          service: 'redis'
-          env: 'production'
+          service: "redis"
+          env: "production"
 
-  - job_name: 'postgres'
+  - job_name: "postgres"
     static_configs:
-      - targets: ['postgres-exporter:9187']
+      - targets: ["postgres-exporter:9187"]
         labels:
-          service: 'postgres'
-          env: 'production'
+          service: "postgres"
+          env: "production"
+
+  - job_name: "kafka-mongo-stream"
+    metrics_path: "/actuator/prometheus"
+    static_configs:
+      - targets: ["host.docker.internal:9800"] # ← đổi port Spring Boot
+        labels:
+          service: "kafka-mongo-stream"
+          env: "production"
 
   # Thêm các VPS khác ở đây
   # - job_name: 'node-exporter-remote'

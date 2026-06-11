@@ -1,0 +1,428 @@
+{
+  "uid": "kafka-overview",
+  "title": "Kafka Overview",
+  "tags": ["kafka", "pipeline"],
+  "timezone": "Asia/Ho_Chi_Minh",
+  "schemaVersion": 39,
+  "refresh": "30s",
+  "time": { "from": "now-3h", "to": "now" },
+  "panels": [
+
+    {
+      "id": 100,
+      "title": "Tổng quan",
+      "type": "row",
+      "gridPos": { "x": 0, "y": 0, "w": 24, "h": 1 },
+      "collapsed": false
+    },
+
+    {
+      "id": 101,
+      "title": "Kafka Brokers",
+      "type": "stat",
+      "gridPos": { "x": 0, "y": 1, "w": 4, "h": 4 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "textMode": "auto",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#F2495C", "value": null },
+              { "color": "#73BF69", "value": 1 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "kafka_brokers", "legendFormat": "brokers", "instant": true }
+      ]
+    },
+
+    {
+      "id": 102,
+      "title": "Total Consumer Lag  ⭐",
+      "type": "stat",
+      "gridPos": { "x": 4, "y": 1, "w": 5, "h": 4 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "textMode": "auto",
+        "graphMode": "area"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#73BF69", "value": null },
+              { "color": "#F2CC0C", "value": 500 },
+              { "color": "#F2495C", "value": 50000 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "sum(kafka_consumergroup_lag)", "legendFormat": "total lag", "instant": true }
+      ]
+    },
+
+    {
+      "id": 103,
+      "title": "Lag Trend (msg/min)",
+      "type": "stat",
+      "gridPos": { "x": 9, "y": 1, "w": 5, "h": 4 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "textMode": "auto",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#73BF69", "value": null },
+              { "color": "#F2CC0C", "value": 50 },
+              { "color": "#F2495C", "value": 500 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "deriv(sum(kafka_consumergroup_lag)[10m:1m])", "legendFormat": "Δ lag/min", "instant": true }
+      ]
+    },
+
+    {
+      "id": 104,
+      "title": "Under-Replicated Partitions",
+      "type": "stat",
+      "gridPos": { "x": 14, "y": 1, "w": 5, "h": 4 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "textMode": "auto",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#73BF69", "value": null },
+              { "color": "#F2495C", "value": 1 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "sum(kafka_topic_partition_under_replicated_partition)", "legendFormat": "under-replicated", "instant": true }
+      ]
+    },
+
+    {
+      "id": 105,
+      "title": "Topics",
+      "type": "stat",
+      "gridPos": { "x": 19, "y": 1, "w": 5, "h": 4 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "value",
+        "textMode": "auto",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": { "mode": "fixed", "fixedColor": "#A0A0A0" }
+        }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "count(count by (topic)(kafka_topic_partition_current_offset))", "legendFormat": "topics", "instant": true }
+      ]
+    },
+
+    {
+      "id": 200,
+      "title": "Consumer Lag  ⭐⭐",
+      "type": "row",
+      "gridPos": { "x": 0, "y": 5, "w": 24, "h": 1 },
+      "collapsed": false
+    },
+
+    {
+      "id": 201,
+      "title": "Lag theo Topic & Consumer Group",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 6, "w": 16, "h": 9 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": { "lineWidth": 2, "fillOpacity": 12, "gradientMode": "opacity" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#73BF69", "value": null },
+              { "color": "#F2CC0C", "value": 500 },
+              { "color": "#F2495C", "value": 50000 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "sum by (topic, consumergroup) (kafka_consumergroup_lag)",
+          "legendFormat": "{{topic}} / {{consumergroup}}"
+        }
+      ]
+    },
+
+    {
+      "id": 202,
+      "title": "Lag hiện tại theo Group",
+      "type": "bargauge",
+      "gridPos": { "x": 16, "y": 6, "w": 8, "h": 9 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "orientation": "horizontal",
+        "displayMode": "gradient",
+        "showUnfilled": true
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#73BF69", "value": null },
+              { "color": "#F2CC0C", "value": 500 },
+              { "color": "#F2495C", "value": 50000 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "sort_desc(sum by (consumergroup) (kafka_consumergroup_lag))",
+          "legendFormat": "{{consumergroup}}",
+          "instant": true
+        }
+      ]
+    },
+
+    {
+      "id": 203,
+      "title": "Lag theo Partition (Top 10)",
+      "type": "table",
+      "gridPos": { "x": 0, "y": 15, "w": 24, "h": 8 },
+      "options": {
+        "sortBy": [{ "displayName": "Lag", "desc": true }],
+        "footer": { "show": false }
+      },
+      "fieldConfig": {
+        "defaults": { "unit": "short" },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "Lag" },
+            "properties": [
+              { "id": "custom.width", "value": 120 },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [{ "color": "#73BF69", "value": null }, { "color": "#F2CC0C", "value": 500 }, { "color": "#F2495C", "value": 50000 }]
+                }
+              },
+              { "id": "custom.displayMode", "value": "color-background" }
+            ]
+          }
+        ]
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "topk(10, kafka_consumergroup_lag)",
+          "legendFormat": "{{consumergroup}} | {{topic}} | p{{partition}}",
+          "instant": true,
+          "format": "table"
+        }
+      ],
+      "transformations": [
+        { "id": "organize", "options": { "renameByName": { "Value": "Lag", "consumergroup": "Consumer Group", "topic": "Topic", "partition": "Partition" } } }
+      ]
+    },
+
+    {
+      "id": 300,
+      "title": "Message Rate",
+      "type": "row",
+      "gridPos": { "x": 0, "y": 23, "w": 24, "h": 1 },
+      "collapsed": false
+    },
+
+    {
+      "id": 301,
+      "title": "Messages Produced/sec theo Topic",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 24, "w": 12, "h": 8 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "custom": { "lineWidth": 2, "fillOpacity": 10, "gradientMode": "opacity" }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "sum by (topic) (rate(kafka_topic_partition_current_offset[5m]))",
+          "legendFormat": "{{topic}}"
+        }
+      ]
+    },
+
+    {
+      "id": 302,
+      "title": "Messages Consumed/sec theo Group",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 24, "w": 12, "h": 8 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "custom": { "lineWidth": 2, "fillOpacity": 10, "gradientMode": "opacity" }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "sum by (consumergroup, topic) (rate(kafka_consumergroup_current_offset[5m]))",
+          "legendFormat": "{{consumergroup}} / {{topic}}"
+        }
+      ]
+    },
+
+    {
+      "id": 303,
+      "title": "Offset hiện tại vs Consumer Offset",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 32, "w": 24, "h": 7 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": { "lineWidth": 2, "fillOpacity": 6, "gradientMode": "opacity" }
+        },
+        "overrides": [
+          { "matcher": { "id": "byRegexp", "options": "current offset.*" },   "properties": [{ "id": "color", "value": { "fixedColor": "#73BF69", "mode": "fixed" } }] },
+          { "matcher": { "id": "byRegexp", "options": "consumer offset.*" },  "properties": [{ "id": "color", "value": { "fixedColor": "#5794F2", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "sum by (topic) (kafka_topic_partition_current_offset)",
+          "legendFormat": "current offset {{topic}}"
+        },
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "sum by (consumergroup, topic) (kafka_consumergroup_current_offset)",
+          "legendFormat": "consumer offset {{topic}} / {{consumergroup}}"
+        }
+      ]
+    },
+
+    {
+      "id": 400,
+      "title": "Partition Health",
+      "type": "row",
+      "gridPos": { "x": 0, "y": 39, "w": 24, "h": 1 },
+      "collapsed": false
+    },
+
+    {
+      "id": 401,
+      "title": "In-Sync Replicas theo Topic",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 40, "w": 12, "h": 7 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": { "lineWidth": 2, "fillOpacity": 8, "gradientMode": "opacity" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "#F2495C", "value": null }, { "color": "#73BF69", "value": 1 }]
+          }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "min by (topic) (kafka_topic_partition_in_sync_replica)",
+          "legendFormat": "{{topic}}"
+        }
+      ]
+    },
+
+    {
+      "id": 402,
+      "title": "Under-Replicated Partitions theo Topic",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 40, "w": 12, "h": 7 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": { "lineWidth": 2, "fillOpacity": 15, "gradientMode": "opacity" },
+          "color": { "mode": "fixed", "fixedColor": "#F2495C" }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "sum by (topic) (kafka_topic_partition_under_replicated_partition)",
+          "legendFormat": "{{topic}}"
+        }
+      ]
+    },
+
+    {
+      "id": 403,
+      "title": "Oldest vs Newest Offset (retention window)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 47, "w": 24, "h": 7 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": { "lineWidth": 1, "fillOpacity": 5, "gradientMode": "none" }
+        },
+        "overrides": [
+          { "matcher": { "id": "byRegexp", "options": "newest.*" }, "properties": [{ "id": "color", "value": { "fixedColor": "#73BF69", "mode": "fixed" } }] },
+          { "matcher": { "id": "byRegexp", "options": "oldest.*" }, "properties": [{ "id": "color", "value": { "fixedColor": "#F2495C", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "sum by (topic) (kafka_topic_partition_current_offset)",
+          "legendFormat": "newest {{topic}}"
+        },
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "sum by (topic) (kafka_topic_partition_oldest_offset)",
+          "legendFormat": "oldest {{topic}}"
+        }
+      ]
+    }
+
+  ]
+}

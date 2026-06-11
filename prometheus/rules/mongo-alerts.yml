@@ -10,6 +10,26 @@ groups:
           summary: "MongoDB không phản hồi"
           description: "MongoDB không kết nối được hơn 1 phút — kiểm tra container và disk"
 
+      - alert: PostgreSQLDown
+        expr: pg_up == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: postgresql
+        annotations:
+          summary: "🔴 PostgreSQL DOWN"
+          description: "PostgreSQL không kết nối được hơn 1 phút — kiểm tra container và kết nối DB"
+
+      - alert: KafkaDown
+        expr: up{job="kafka-exporter"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: kafka
+        annotations:
+          summary: "🔴 Kafka DOWN"
+          description: "Kafka exporter không phản hồi hơn 1 phút — kiểm tra Kafka broker"
+
       - alert: MongoDBTooManyConnections
         expr: mongodb_connections{state="current"} > 500
         for: 5m

@@ -10,6 +10,12 @@ route:
 
   routes:
     - matchers:
+        - alertname =~ "MongoDBDown|PostgreSQLDown|KafkaDown"
+      receiver: 'telegram-critical'
+      group_wait: 10s
+      repeat_interval: 1h
+
+    - matchers:
         - severity = "critical"
       receiver: 'telegram-critical'
       group_wait: 10s

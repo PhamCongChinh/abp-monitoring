@@ -16,7 +16,7 @@ route:
       repeat_interval: 15m
 
     - matchers:
-        - alertname =~ "MongoDBDown|PostgreSQLDown|KafkaDown"
+        - alertname =~ "MongoDBDown|MongoContainerDown|PostgreSQLDown|KafkaDown"
       receiver: 'telegram-critical'
       group_wait: 10s
       repeat_interval: 1h

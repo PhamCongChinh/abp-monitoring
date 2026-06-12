@@ -2,10 +2,10 @@ groups:
   - name: container_alerts
     rules:
       - alert: MongoContainerDown
-        expr: absent(container_last_seen{name="mongo_new"}) or time() - container_last_seen{name="mongo_new"} > 60
+        expr: absent(container_last_seen{name="mongodb_new"}) or time() - container_last_seen{name="mongodb_new"} > 60
         for: 2m
         labels:
           severity: critical
         annotations:
           summary: "Container MongoDB đã dừng"
-          description: "Container 'mongo_new' trên 103.97.125.64 không phản hồi hơn 2 phút"
+          description: "Container 'mongodb_new' trên 103.97.125.64 không phản hồi hơn 2 phút"

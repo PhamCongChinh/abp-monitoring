@@ -1,0 +1,822 @@
+{
+  "uid": "redis-overview",
+  "title": "Redis Overview",
+  "tags": ["redis", "queue", "pipeline"],
+  "timezone": "Asia/Ho_Chi_Minh",
+  "schemaVersion": 39,
+  "refresh": "30s",
+  "time": { "from": "now-3h", "to": "now" },
+  "panels": [
+
+    {
+      "id": 100,
+      "title": "Tổng quan",
+      "type": "row",
+      "gridPos": { "x": 0, "y": 0, "w": 24, "h": 1 },
+      "collapsed": false
+    },
+
+    {
+      "id": 101,
+      "title": "Redis Status",
+      "type": "stat",
+      "gridPos": { "x": 0, "y": 1, "w": 3, "h": 4 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "textMode": "auto",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "mappings": [
+            { "type": "value", "options": { "0": { "text": "DOWN", "color": "#F2495C" }, "1": { "text": "UP", "color": "#73BF69" } } }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#F2495C", "value": null },
+              { "color": "#73BF69", "value": 1 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "redis_up", "legendFormat": "status", "instant": true }
+      ]
+    },
+
+    {
+      "id": 102,
+      "title": "Connected Clients",
+      "type": "stat",
+      "gridPos": { "x": 3, "y": 1, "w": 3, "h": 4 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "textMode": "auto",
+        "graphMode": "area"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#73BF69", "value": null },
+              { "color": "#F2CC0C", "value": 50 },
+              { "color": "#F2495C", "value": 200 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "redis_connected_clients", "legendFormat": "clients", "instant": true }
+      ]
+    },
+
+    {
+      "id": 103,
+      "title": "Blocked Clients",
+      "type": "stat",
+      "gridPos": { "x": 6, "y": 1, "w": 3, "h": 4 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "textMode": "auto",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#73BF69", "value": null },
+              { "color": "#F2CC0C", "value": 1 },
+              { "color": "#F2495C", "value": 10 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "redis_blocked_clients", "legendFormat": "blocked", "instant": true }
+      ]
+    },
+
+    {
+      "id": 104,
+      "title": "OPS / sec  ⭐",
+      "type": "stat",
+      "gridPos": { "x": 9, "y": 1, "w": 4, "h": 4 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "textMode": "auto",
+        "graphMode": "area"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#73BF69", "value": null },
+              { "color": "#F2CC0C", "value": 5000 },
+              { "color": "#F2495C", "value": 20000 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "redis_instantaneous_ops_per_sec", "legendFormat": "ops/sec", "instant": true }
+      ]
+    },
+
+    {
+      "id": 105,
+      "title": "Hit Rate  ⭐",
+      "type": "stat",
+      "gridPos": { "x": 13, "y": 1, "w": 4, "h": 4 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "textMode": "auto",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#F2495C", "value": null },
+              { "color": "#F2CC0C", "value": 70 },
+              { "color": "#73BF69", "value": 90 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "rate(redis_keyspace_hits_total[5m]) / (rate(redis_keyspace_hits_total[5m]) + rate(redis_keyspace_misses_total[5m])) * 100",
+          "legendFormat": "hit rate %",
+          "instant": true
+        }
+      ]
+    },
+
+    {
+      "id": 106,
+      "title": "Uptime",
+      "type": "stat",
+      "gridPos": { "x": 17, "y": 1, "w": 4, "h": 4 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "value",
+        "textMode": "auto",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "dtdurations",
+          "color": { "mode": "fixed", "fixedColor": "#A0A0A0" }
+        }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "redis_uptime_in_seconds", "legendFormat": "uptime", "instant": true }
+      ]
+    },
+
+    {
+      "id": 107,
+      "title": "Evicted Keys",
+      "type": "stat",
+      "gridPos": { "x": 21, "y": 1, "w": 3, "h": 4 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "textMode": "auto",
+        "graphMode": "area"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#73BF69", "value": null },
+              { "color": "#F2CC0C", "value": 1 },
+              { "color": "#F2495C", "value": 100 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "increase(redis_evicted_keys_total[5m])", "legendFormat": "evicted (5m)", "instant": true }
+      ]
+    },
+
+    {
+      "id": 200,
+      "title": "Bộ nhớ",
+      "type": "row",
+      "gridPos": { "x": 0, "y": 5, "w": 24, "h": 1 },
+      "collapsed": false
+    },
+
+    {
+      "id": 201,
+      "title": "Used Memory",
+      "type": "stat",
+      "gridPos": { "x": 0, "y": 6, "w": 4, "h": 4 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "textMode": "auto",
+        "graphMode": "area"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#73BF69", "value": null },
+              { "color": "#F2CC0C", "value": 536870912 },
+              { "color": "#F2495C", "value": 1073741824 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "redis_used_memory_bytes", "legendFormat": "used", "instant": true }
+      ]
+    },
+
+    {
+      "id": 202,
+      "title": "Peak Memory",
+      "type": "stat",
+      "gridPos": { "x": 4, "y": 6, "w": 4, "h": 4 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "value",
+        "textMode": "auto",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "color": { "mode": "fixed", "fixedColor": "#5794F2" }
+        }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "redis_used_memory_peak_bytes", "legendFormat": "peak", "instant": true }
+      ]
+    },
+
+    {
+      "id": 203,
+      "title": "RSS Memory",
+      "type": "stat",
+      "gridPos": { "x": 8, "y": 6, "w": 4, "h": 4 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "value",
+        "textMode": "auto",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "color": { "mode": "fixed", "fixedColor": "#A0A0A0" }
+        }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "redis_memory_used_rss_bytes", "legendFormat": "rss", "instant": true }
+      ]
+    },
+
+    {
+      "id": 204,
+      "title": "Fragmentation Ratio",
+      "type": "stat",
+      "gridPos": { "x": 12, "y": 6, "w": 4, "h": 4 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "textMode": "auto",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 2,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#73BF69", "value": null },
+              { "color": "#F2CC0C", "value": 1.5 },
+              { "color": "#F2495C", "value": 2.0 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "redis_mem_fragmentation_ratio", "legendFormat": "fragmentation", "instant": true }
+      ]
+    },
+
+    {
+      "id": 205,
+      "title": "Memory Usage (Used vs Peak)",
+      "type": "timeseries",
+      "gridPos": { "x": 16, "y": 6, "w": 8, "h": 8 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "custom": { "lineWidth": 2, "fillOpacity": 10, "gradientMode": "opacity" }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "peak" }, "properties": [{ "id": "color", "value": { "fixedColor": "#F2CC0C", "mode": "fixed" } }, { "id": "custom.lineStyle", "value": { "dash": [4, 4], "fill": "dash" } }] },
+          { "matcher": { "id": "byName", "options": "used" }, "properties": [{ "id": "color", "value": { "fixedColor": "#73BF69", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "redis_used_memory_bytes", "legendFormat": "used" },
+        { "datasource": { "type": "prometheus" }, "expr": "redis_used_memory_peak_bytes", "legendFormat": "peak" },
+        { "datasource": { "type": "prometheus" }, "expr": "redis_maxmemory_bytes > 0", "legendFormat": "max limit" }
+      ]
+    },
+
+    {
+      "id": 206,
+      "title": "Fragmentation Ratio (trend)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 10, "w": 8, "h": 5 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 2,
+          "custom": { "lineWidth": 2, "fillOpacity": 8, "gradientMode": "opacity" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#73BF69", "value": null },
+              { "color": "#F2CC0C", "value": 1.5 },
+              { "color": "#F2495C", "value": 2.0 }
+            ]
+          },
+          "color": { "mode": "thresholds" }
+        }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "redis_mem_fragmentation_ratio", "legendFormat": "frag ratio" }
+      ]
+    },
+
+    {
+      "id": 207,
+      "title": "Memory % Used (so với Peak)",
+      "type": "timeseries",
+      "gridPos": { "x": 8, "y": 10, "w": 8, "h": 5 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "custom": { "lineWidth": 2, "fillOpacity": 10, "gradientMode": "opacity" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#73BF69", "value": null },
+              { "color": "#F2CC0C", "value": 70 },
+              { "color": "#F2495C", "value": 90 }
+            ]
+          },
+          "color": { "mode": "thresholds" }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "redis_used_memory_bytes / redis_used_memory_peak_bytes * 100",
+          "legendFormat": "% of peak"
+        }
+      ]
+    },
+
+    {
+      "id": 300,
+      "title": "Queue & Keys",
+      "type": "row",
+      "gridPos": { "x": 0, "y": 15, "w": 24, "h": 1 },
+      "collapsed": false
+    },
+
+    {
+      "id": 301,
+      "title": "Total Keys (db0)  ⭐",
+      "type": "stat",
+      "gridPos": { "x": 0, "y": 16, "w": 4, "h": 4 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "textMode": "auto",
+        "graphMode": "area"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#73BF69", "value": null },
+              { "color": "#F2CC0C", "value": 50000 },
+              { "color": "#F2495C", "value": 200000 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "sum(redis_db_keys)", "legendFormat": "total keys", "instant": true }
+      ]
+    },
+
+    {
+      "id": 302,
+      "title": "Expiring Keys",
+      "type": "stat",
+      "gridPos": { "x": 4, "y": 16, "w": 4, "h": 4 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "value",
+        "textMode": "auto",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": { "mode": "fixed", "fixedColor": "#5794F2" }
+        }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "sum(redis_db_keys_expiring)", "legendFormat": "expiring", "instant": true }
+      ]
+    },
+
+    {
+      "id": 303,
+      "title": "Expired Keys / 5m",
+      "type": "stat",
+      "gridPos": { "x": 8, "y": 16, "w": 4, "h": 4 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "textMode": "auto",
+        "graphMode": "area"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#73BF69", "value": null },
+              { "color": "#F2CC0C", "value": 100 },
+              { "color": "#F2495C", "value": 1000 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "increase(redis_expired_keys_total[5m])", "legendFormat": "expired/5m", "instant": true }
+      ]
+    },
+
+    {
+      "id": 304,
+      "title": "Evicted Keys / 5m  ⚠️",
+      "type": "stat",
+      "gridPos": { "x": 12, "y": 16, "w": 4, "h": 4 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "textMode": "auto",
+        "graphMode": "area"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#73BF69", "value": null },
+              { "color": "#F2CC0C", "value": 1 },
+              { "color": "#F2495C", "value": 50 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "increase(redis_evicted_keys_total[5m])", "legendFormat": "evicted/5m", "instant": true }
+      ]
+    },
+
+    {
+      "id": 305,
+      "title": "Keys per DB",
+      "type": "bargauge",
+      "gridPos": { "x": 16, "y": 16, "w": 8, "h": 4 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "orientation": "horizontal",
+        "displayMode": "gradient",
+        "showUnfilled": true
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#73BF69", "value": null },
+              { "color": "#F2CC0C", "value": 50000 },
+              { "color": "#F2495C", "value": 200000 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "redis_db_keys", "legendFormat": "{{db}}", "instant": true }
+      ]
+    },
+
+    {
+      "id": 306,
+      "title": "Keys Count (trend)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 20, "w": 12, "h": 7 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": { "lineWidth": 2, "fillOpacity": 10, "gradientMode": "opacity" }
+        }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "redis_db_keys", "legendFormat": "{{db}}" },
+        { "datasource": { "type": "prometheus" }, "expr": "redis_db_keys_expiring", "legendFormat": "{{db}} expiring" }
+      ]
+    },
+
+    {
+      "id": 307,
+      "title": "Evicted & Expired Keys rate",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 20, "w": 12, "h": 7 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "custom": { "lineWidth": 2, "fillOpacity": 8, "gradientMode": "opacity" }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "evicted/sec" }, "properties": [{ "id": "color", "value": { "fixedColor": "#F2495C", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "expired/sec" }, "properties": [{ "id": "color", "value": { "fixedColor": "#F2CC0C", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "rate(redis_evicted_keys_total[5m])", "legendFormat": "evicted/sec" },
+        { "datasource": { "type": "prometheus" }, "expr": "rate(redis_expired_keys_total[5m])", "legendFormat": "expired/sec" }
+      ]
+    },
+
+    {
+      "id": 400,
+      "title": "Performance",
+      "type": "row",
+      "gridPos": { "x": 0, "y": 27, "w": 24, "h": 1 },
+      "collapsed": false
+    },
+
+    {
+      "id": 401,
+      "title": "Commands / sec",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 28, "w": 12, "h": 8 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "custom": { "lineWidth": 2, "fillOpacity": 10, "gradientMode": "opacity" }
+        }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "rate(redis_commands_processed_total[1m])", "legendFormat": "{{cmd}}" }
+      ]
+    },
+
+    {
+      "id": 402,
+      "title": "Hit vs Miss Rate",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 28, "w": 12, "h": 8 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "custom": { "lineWidth": 2, "fillOpacity": 8, "gradientMode": "opacity" }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "hits/sec" }, "properties": [{ "id": "color", "value": { "fixedColor": "#73BF69", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "misses/sec" }, "properties": [{ "id": "color", "value": { "fixedColor": "#F2495C", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "rate(redis_keyspace_hits_total[1m])", "legendFormat": "hits/sec" },
+        { "datasource": { "type": "prometheus" }, "expr": "rate(redis_keyspace_misses_total[1m])", "legendFormat": "misses/sec" }
+      ]
+    },
+
+    {
+      "id": 403,
+      "title": "Hit Rate % (trend)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 36, "w": 12, "h": 7 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "custom": { "lineWidth": 2, "fillOpacity": 12, "gradientMode": "opacity" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#F2495C", "value": null },
+              { "color": "#F2CC0C", "value": 70 },
+              { "color": "#73BF69", "value": 90 }
+            ]
+          },
+          "color": { "mode": "thresholds" }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "rate(redis_keyspace_hits_total[5m]) / (rate(redis_keyspace_hits_total[5m]) + rate(redis_keyspace_misses_total[5m])) * 100",
+          "legendFormat": "hit rate %"
+        }
+      ]
+    },
+
+    {
+      "id": 404,
+      "title": "Connections / sec",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 36, "w": 12, "h": 7 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "custom": { "lineWidth": 2, "fillOpacity": 8, "gradientMode": "opacity" }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "connected" }, "properties": [{ "id": "color", "value": { "fixedColor": "#5794F2", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "rejected" }, "properties": [{ "id": "color", "value": { "fixedColor": "#F2495C", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "rate(redis_connections_received_total[1m])", "legendFormat": "connected" },
+        { "datasource": { "type": "prometheus" }, "expr": "rate(redis_rejected_connections_total[1m])", "legendFormat": "rejected" }
+      ]
+    },
+
+    {
+      "id": 500,
+      "title": "Network I/O",
+      "type": "row",
+      "gridPos": { "x": 0, "y": 43, "w": 24, "h": 1 },
+      "collapsed": false
+    },
+
+    {
+      "id": 501,
+      "title": "Network Throughput",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 44, "w": 16, "h": 8 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "binBps",
+          "custom": { "lineWidth": 2, "fillOpacity": 10, "gradientMode": "opacity" }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "input" }, "properties": [{ "id": "color", "value": { "fixedColor": "#73BF69", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "output" }, "properties": [{ "id": "color", "value": { "fixedColor": "#5794F2", "mode": "fixed" } }, { "id": "custom.transform", "value": "negative-Y" }] }
+        ]
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "rate(redis_net_input_bytes_total[1m])", "legendFormat": "input" },
+        { "datasource": { "type": "prometheus" }, "expr": "rate(redis_net_output_bytes_total[1m])", "legendFormat": "output" }
+      ]
+    },
+
+    {
+      "id": 502,
+      "title": "Network tổng (5m)",
+      "type": "stat",
+      "gridPos": { "x": 16, "y": 44, "w": 4, "h": 4 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "value",
+        "textMode": "auto",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "color": { "mode": "fixed", "fixedColor": "#73BF69" }
+        }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "increase(redis_net_input_bytes_total[5m])", "legendFormat": "in (5m)", "instant": true }
+      ]
+    },
+
+    {
+      "id": 503,
+      "title": "RDB Save Status",
+      "type": "stat",
+      "gridPos": { "x": 20, "y": 44, "w": 4, "h": 4 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "textMode": "auto",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "mappings": [
+            { "type": "value", "options": { "0": { "text": "FAILED", "color": "#F2495C" }, "1": { "text": "OK", "color": "#73BF69" } } }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#F2495C", "value": null },
+              { "color": "#73BF69", "value": 1 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "redis_rdb_last_bgsave_status", "legendFormat": "rdb save", "instant": true }
+      ]
+    },
+
+    {
+      "id": 504,
+      "title": "Output (5m)",
+      "type": "stat",
+      "gridPos": { "x": 16, "y": 48, "w": 4, "h": 4 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "value",
+        "textMode": "auto",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "color": { "mode": "fixed", "fixedColor": "#5794F2" }
+        }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "increase(redis_net_output_bytes_total[5m])", "legendFormat": "out (5m)", "instant": true }
+      ]
+    },
+
+    {
+      "id": 505,
+      "title": "AOF Enabled",
+      "type": "stat",
+      "gridPos": { "x": 20, "y": 48, "w": 4, "h": 4 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "value",
+        "textMode": "auto",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "mappings": [
+            { "type": "value", "options": { "0": { "text": "Off" }, "1": { "text": "On", "color": "#73BF69" } } }
+          ],
+          "color": { "mode": "fixed", "fixedColor": "#A0A0A0" }
+        }
+      },
+      "targets": [
+        { "datasource": { "type": "prometheus" }, "expr": "redis_aof_enabled", "legendFormat": "aof", "instant": true }
+      ]
+    }
+
+  ]
+}
